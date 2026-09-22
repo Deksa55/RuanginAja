@@ -312,8 +312,9 @@ function SpacesContent() {
                           <Star className="w-3 h-3 text-amber-500 fill-amber-500" />
                           <span>4.9</span>
                         </span>
-                        <span className="bg-slate-900/80 backdrop-blur-md text-white px-2 py-0.5 rounded-full text-[10px] font-bold shadow-sm">
-                          👥 {s.kapasitas || 1} Org
+                        <span className="bg-slate-900/80 backdrop-blur-md text-white px-2 py-0.5 rounded-full text-[10px] font-bold shadow-sm flex items-center gap-1">
+                          <Users className="w-2.5 h-2.5" />
+                          <span>{s.kapasitas || 1} Org</span>
                         </span>
                       </div>
 
@@ -342,32 +343,19 @@ function SpacesContent() {
                         {s.deskripsi || "Fasilitas lengkap dengan Wi-Fi super cepat, stopkontak personal, dan suasana nyaman untuk produktivitas optimal."}
                       </p>
 
-                      {/* Facility Mini Chips with Distinct Accents */}
-                      <div className="flex flex-wrap gap-1.5 pt-0.5">
-                        <span className="inline-flex items-center gap-1 text-[10px] font-semibold text-sky-700 bg-sky-50 px-2 py-0.5 rounded-lg border border-sky-100">
-                          <Wifi className="w-2.5 h-2.5 text-[#087EA4]" /> 300 Mbps
+                      {/* Facility Chips in Clean Ocean Blue */}
+                      <div className="flex flex-wrap gap-1.5 pt-1">
+                        <span className="inline-flex items-center gap-1.5 text-[10px] font-semibold text-[#087EA4] bg-sky-50 border border-sky-100/90 px-2.5 py-0.5 rounded-lg">
+                          <Wifi className="w-3 h-3 text-[#087EA4]" />
+                          <span>Wi-Fi</span>
                         </span>
-                        <span className="inline-flex items-center gap-1 text-[10px] font-semibold text-amber-700 bg-amber-50 px-2 py-0.5 rounded-lg border border-amber-100">
-                          <Coffee className="w-2.5 h-2.5 text-amber-600" /> Free Coffee
+                        <span className="inline-flex items-center gap-1.5 text-[10px] font-semibold text-[#087EA4] bg-sky-50 border border-sky-100/90 px-2.5 py-0.5 rounded-lg">
+                          <Coffee className="w-3 h-3 text-[#087EA4]" />
+                          <span>Free Coffee</span>
                         </span>
-                        <span className="inline-flex items-center gap-1 text-[10px] font-semibold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-lg border border-emerald-100">
-                          <Zap className="w-2.5 h-2.5 text-emerald-600" /> Stopkontak
-                        </span>
-                        <span className="inline-flex items-center gap-1 text-[10px] font-semibold text-indigo-700 bg-indigo-50 px-2 py-0.5 rounded-lg border border-indigo-100">
-                          <ShieldCheck className="w-2.5 h-2.5 text-indigo-600" /> QR Access
-                        </span>
-                      </div>
-
-                      {/* Creative Micro Highlight Strip (Eliminates dead empty space) */}
-                      <div className="bg-sky-50/70 border border-sky-100/90 rounded-xl px-3 py-2 flex items-center justify-between text-[11px] text-slate-600">
-                        <span className="flex items-center gap-1.5 font-medium">
-                          <Sparkles className="w-3.5 h-3.5 text-[#087EA4]" />
-                          <span>Check-in Cepat</span>
-                        </span>
-                        <span className="text-slate-300">•</span>
-                        <span className="flex items-center gap-1.5 font-medium">
-                          <Clock className="w-3.5 h-3.5 text-slate-500" />
-                          <span>Akses 24 Jam</span>
+                        <span className="inline-flex items-center gap-1.5 text-[10px] font-semibold text-[#087EA4] bg-sky-50 border border-sky-100/90 px-2.5 py-0.5 rounded-lg">
+                          <ShieldCheck className="w-3 h-3 text-[#087EA4]" />
+                          <span>QR Access</span>
                         </span>
                       </div>
                     </div>

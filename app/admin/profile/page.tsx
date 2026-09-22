@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { apiFetcher } from "../../../lib/api/client";
+import { CheckCircle2 } from "lucide-react";
 
 export default function AdminProfilePage() {
   const [profile, setProfile] = useState({
@@ -83,7 +84,7 @@ export default function AdminProfilePage() {
 
         {savedSuccess && (
           <div className="p-3.5 bg-emerald-50 text-emerald-700 rounded-2xl text-xs font-bold border border-emerald-200 flex items-center gap-2">
-            <span>✅</span>
+            <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
             <span>Profil Coworking Space berhasil diperbarui di server!</span>
           </div>
         )}

@@ -8,6 +8,16 @@ import {
   uploadMedia,
   getStoredUser,
 } from "../../../lib/api/client";
+import {
+  Search,
+  Building2,
+  Users,
+  Edit2,
+  Trash2,
+  X,
+  Upload,
+  Info,
+} from "lucide-react";
 
 interface SpaceItem {
   id: number;
@@ -214,7 +224,7 @@ export default function AdminSpacesPage() {
             onChange={(e) => setSearch(e.target.value)}
             className="w-full bg-slate-50 border border-slate-200 pl-10 pr-4 py-2.5 rounded-xl text-xs outline-none focus:border-[#087EA4]"
           />
-          <span className="absolute left-3.5 top-3 text-slate-400 text-xs">🔍</span>
+          <Search className="w-4 h-4 absolute left-3.5 top-3 text-slate-400" />
         </div>
 
         <div className="flex flex-wrap gap-2 w-full sm:w-auto">
@@ -247,8 +257,8 @@ export default function AdminSpacesPage() {
         </div>
       ) : filteredSpaces.length === 0 ? (
         <div className="bg-white p-8 sm:p-12 rounded-3xl text-center border border-slate-200/90 space-y-4 max-w-xl mx-auto shadow-xs">
-          <div className="w-16 h-16 rounded-2xl bg-sky-50 text-[#087EA4] flex items-center justify-center mx-auto text-3xl">
-            🏢
+          <div className="w-16 h-16 rounded-2xl bg-sky-50 text-[#087EA4] flex items-center justify-center mx-auto">
+            <Building2 className="w-8 h-8 text-[#087EA4]" />
           </div>
           <div className="space-y-2">
             <h3 className="font-black text-slate-900 text-base">
@@ -260,7 +270,8 @@ export default function AdminSpacesPage() {
             </p>
             <div className="bg-sky-50 border border-sky-200/80 rounded-2xl p-3.5 max-w-md mx-auto text-left space-y-1 text-xs text-slate-700">
               <div className="flex items-center gap-1.5 font-bold text-[#087EA4]">
-                <span>💡</span> Cara Agar Reservasi Masuk:
+                <Info className="w-4 h-4 text-[#087EA4] shrink-0" />
+                <span>Cara Agar Reservasi Masuk:</span>
               </div>
               <ol className="list-decimal list-inside space-y-1 text-[11px] text-slate-600 pl-1">
                 <li>Klik tombol <strong>&ldquo;Tambah Ruangan Baru&rdquo;</strong> di bawah.</li>
@@ -297,8 +308,9 @@ export default function AdminSpacesPage() {
                       ? "Private Office"
                       : "Personal Desk"}
                   </span>
-                  <span className="absolute top-3 right-3 bg-white/90 backdrop-blur-md text-slate-800 border border-slate-200/80 px-2.5 py-0.5 rounded-full text-[10px] font-bold shadow-xs">
-                    👥 {s.kapasitas} Orang
+                  <span className="absolute top-3 right-3 bg-white/90 backdrop-blur-md text-slate-800 border border-slate-200/80 px-2.5 py-0.5 rounded-full text-[10px] font-bold shadow-xs flex items-center gap-1">
+                    <Users className="w-3 h-3 text-slate-500" />
+                    <span>{s.kapasitas} Orang</span>
                   </span>
                 </div>
 
@@ -326,15 +338,17 @@ export default function AdminSpacesPage() {
                 <div className="flex items-center gap-1.5">
                   <button
                     onClick={() => handleOpenEdit(s)}
-                    className="bg-slate-100 hover:bg-slate-200 text-slate-700 px-3 py-1.5 rounded-xl text-xs font-bold transition-all"
+                    className="bg-slate-100 hover:bg-slate-200 text-slate-700 px-3 py-1.5 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5"
                   >
-                    ✏️ Ubah
+                    <Edit2 className="w-3.5 h-3.5" />
+                    <span>Ubah</span>
                   </button>
                   <button
                     onClick={() => handleDelete(s.id, s.nama_space)}
-                    className="bg-rose-50 hover:bg-rose-100 text-rose-600 px-3 py-1.5 rounded-xl text-xs font-bold transition-all border border-rose-200"
+                    className="bg-rose-50 hover:bg-rose-100 text-rose-600 p-2 rounded-xl text-xs font-bold transition-all border border-rose-200 flex items-center justify-center"
+                    title="Hapus Ruangan"
                   >
-                    🗑️
+                    <Trash2 className="w-3.5 h-3.5" />
                   </button>
                 </div>
               </div>
@@ -358,9 +372,9 @@ export default function AdminSpacesPage() {
               </div>
               <button
                 onClick={() => setIsModalOpen(false)}
-                className="text-slate-400 hover:text-slate-700 text-xl font-bold"
+                className="text-slate-400 hover:text-slate-700 transition-colors"
               >
-                ✕
+                <X className="w-5 h-5" />
               </button>
             </div>
 
@@ -462,7 +476,7 @@ export default function AdminSpacesPage() {
                     onClick={() => fileInputRef.current?.click()}
                     className="bg-sky-50 hover:bg-sky-100 text-[#087EA4] border border-sky-200/80 px-4 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 shadow-xs"
                   >
-                    <span>📁</span>
+                    <Upload className="w-3.5 h-3.5" />
                     <span>{editingSpace && form.foto ? "Ganti Foto Ruangan" : "Pilih Berkas Foto"}</span>
                   </button>
                   <span className="text-xs text-slate-500 truncate max-w-[220px]">

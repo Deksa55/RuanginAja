@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, Suspense } from "react";
+import { useState, Suspense, useRef } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import {
@@ -11,8 +11,11 @@ import {
   ArrowRight,
   CheckCircle2,
   AlertCircle,
+  Camera,
+  X,
+  Upload,
 } from "lucide-react";
-import { apiFetcher } from "../../lib/api/client";
+import { apiFetcher, uploadMedia } from "../../lib/api/client";
 
 interface RegisterViewProps {
   initialRole?: "member" | "admin";
@@ -33,6 +36,12 @@ function RegisterContent({ initialRole = "member" }: RegisterViewProps) {
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+
+  // Avatar upload state for member
+  const [memberAvatarFile, setMemberAvatarFile] = useState<File | null>(null);
+  const [memberAvatarPreview, setMemberAvatarPreview] = useState<string | null>(null);
+  const [uploadingAvatar, setUploadingAvatar] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   // Member form state
   const [memberForm, setMemberForm] = useState({
@@ -59,6 +68,30 @@ function RegisterContent({ initialRole = "member" }: RegisterViewProps) {
     setSuccess("");
   };
 
+  const handleAvatarChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    if (!file.type.startsWith("image/")) {
+      setError("File harus berupa gambar (JPG, PNG, atau WEBP)");
+      return;
+    }
+    if (file.size > 5 * 1024 * 1024) {
+      setError("Ukuran foto maksimal 5MB");
+      return;
+    }
+
+    setMemberAvatarFile(file);
+    setMemberAvatarPreview(URL.createObjectURL(file));
+    setError("");
+  };
+
+  const handleRemoveAvatar = () => {
+    setMemberAvatarFile(null);
+    setMemberAvatarPreview(null);
+    if (fileInputRef.current) fileInputRef.current.value = "";
+  };
+
   const handleMemberSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
@@ -66,12 +99,44 @@ function RegisterContent({ initialRole = "member" }: RegisterViewProps) {
     setSuccess("");
 
     try {
+      let uploadedFilename = "";
+      if (memberAvatarFile) {
+        setUploadingAvatar(true);
+        try {
+          uploadedFilename = await uploadMedia(memberAvatarFile, "members");
+        } catch (uploadErr: any) {
+          console.warn("Upload foto profil gagal, melanjutkan pendaftaran:", uploadErr);
+        } finally {
+          setUploadingAvatar(false);
+        }
+      }
+
+      const payload: any = {
+        ...memberForm,
+      };
+      if (uploadedFilename) {
+        payload.foto = uploadedFilename;
+      }
+
       const res: any = await apiFetcher("/api/auth/register/member", {
         method: "POST",
-        body: JSON.stringify(memberForm),
+        body: JSON.stringify(payload),
       });
 
       if (res?.status || res?.data || res?.message || res) {
+        // Cache user info and avatar locally so top-right navbar profile & profile page has it immediately
+        if (uploadedFilename) {
+          localStorage.setItem(`avatar_${memberForm.username}`, uploadedFilename);
+        }
+        localStorage.setItem(
+          `registered_profile_${memberForm.username}`,
+          JSON.stringify({
+            ...memberForm,
+            foto: uploadedFilename,
+            role: "member",
+          })
+        );
+
         setSuccess(
           "Akun Member berhasil didaftarkan! Mengarahkan ke halaman login..."
         );
@@ -173,7 +238,7 @@ function RegisterContent({ initialRole = "member" }: RegisterViewProps) {
 
           <div className="space-y-1">
             <h2 className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight">
-              Pendaftaran Akun Baru 📝
+              Pendaftaran Akun Baru
             </h2>
             <p className="text-xs text-slate-500">
               Pilih tipe akun dan lengkapi data pendaftaran Anda
@@ -245,6 +310,75 @@ function RegisterContent({ initialRole = "member" }: RegisterViewProps) {
           {/* Form: Member Registration */}
           {role === "member" ? (
             <form onSubmit={handleMemberSubmit} className="space-y-3.5">
+              {/* Foto Profil Member (Input & Preview) */}
+              <div className="p-3.5 rounded-2xl bg-sky-50/70 border border-sky-100 flex items-center gap-4">
+                <div className="relative group shrink-0">
+                  <div className="w-16 h-16 rounded-full overflow-hidden bg-white border-2 border-sky-200 ring-2 ring-[#087EA4]/20 shadow-xs flex items-center justify-center">
+                    {memberAvatarPreview ? (
+                      <img
+                        src={memberAvatarPreview}
+                        alt="Preview Foto Profil"
+                        className="w-full h-full object-cover"
+                      />
+                    ) : (
+                      <User className="w-7 h-7 text-[#087EA4]" />
+                    )}
+                  </div>
+                  {memberAvatarPreview && (
+                    <button
+                      type="button"
+                      onClick={handleRemoveAvatar}
+                      className="absolute -top-1 -right-1 w-5 h-5 rounded-full bg-rose-500 hover:bg-rose-600 text-white flex items-center justify-center text-xs shadow-sm transition-all"
+                      title="Hapus Foto"
+                    >
+                      <X className="w-3 h-3 stroke-[3]" />
+                    </button>
+                  )}
+                </div>
+
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center gap-2">
+                    <span className="text-xs font-bold text-slate-800">
+                      Foto Profil
+                    </span>
+                    <span className="text-[10px] font-semibold text-[#087EA4] bg-sky-100/80 px-2 py-0.5 rounded-full">
+                      Opsional
+                    </span>
+                  </div>
+                  <p className="text-[11px] text-slate-500 truncate mt-0.5">
+                    {memberAvatarFile
+                      ? memberAvatarFile.name
+                      : "Unggah foto profil untuk akun Anda"}
+                  </p>
+                  <div className="mt-2 flex items-center gap-2">
+                    <input
+                      type="file"
+                      ref={fileInputRef}
+                      accept="image/jpeg,image/png,image/webp,image/jpg"
+                      onChange={handleAvatarChange}
+                      className="hidden"
+                      id="member-avatar-input"
+                    />
+                    <label
+                      htmlFor="member-avatar-input"
+                      className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white border border-sky-200 hover:border-[#087EA4] hover:bg-sky-50 text-[#087EA4] text-xs font-bold cursor-pointer transition-all shadow-2xs"
+                    >
+                      <Camera className="w-3.5 h-3.5" />
+                      <span>{memberAvatarPreview ? "Ganti Foto" : "Pilih Foto"}</span>
+                    </label>
+                    {memberAvatarPreview && (
+                      <button
+                        type="button"
+                        onClick={handleRemoveAvatar}
+                        className="text-[11px] text-rose-500 hover:text-rose-700 font-semibold"
+                      >
+                        Batal
+                      </button>
+                    )}
+                  </div>
+                </div>
+              </div>
+
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
                   <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1">

@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { apiFetcher } from "../../../../lib/api/client";
+import { AlertCircle } from "lucide-react";
 
 export default function AdminLoginPage() {
   const router = useRouter();
@@ -96,7 +97,7 @@ export default function AdminLoginPage() {
 
           <div className="space-y-1">
             <h2 className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight">
-              Login Admin Space ⚙️
+              Login Admin Space
             </h2>
             <p className="text-xs text-slate-500">
               Masuk ke dashboard pengelolaan coworking space
@@ -104,8 +105,9 @@ export default function AdminLoginPage() {
           </div>
 
           {error && (
-            <div className="p-3.5 bg-rose-50 text-rose-600 text-xs rounded-2xl font-semibold border border-rose-200 animate-fadeIn">
-              ⚠️ {error}
+            <div className="p-3.5 bg-rose-50 text-rose-600 text-xs rounded-2xl font-semibold border border-rose-200 animate-fadeIn flex items-center gap-2">
+              <AlertCircle className="w-4 h-4 shrink-0" />
+              <span>{error}</span>
             </div>
           )}
 

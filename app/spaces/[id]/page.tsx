@@ -10,6 +10,21 @@ import {
   resolveSpaceImage,
   getStoredUser,
 } from "../../../lib/api/client";
+import {
+  Users,
+  CheckCircle2,
+  AlertCircle,
+  Tag,
+  Wifi,
+  Zap,
+  Wind,
+  Coffee,
+  ShieldCheck,
+  Sparkles,
+  Check,
+  ChevronDown,
+  ChevronUp,
+} from "lucide-react";
 
 export default function SpaceDetailPage({
   params,
@@ -23,8 +38,10 @@ export default function SpaceDetailPage({
   const [space, setSpace] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
+  const [error, setError] = useState("");
+  const [success, setSuccess] = useState(false);
 
-  // Booking Form State
+  // Form State
   const [tanggal, setTanggal] = useState("");
   const [jamMulai, setJamMulai] = useState("09:00");
   const [durasi, setDurasi] = useState(2);
@@ -36,6 +53,9 @@ export default function SpaceDetailPage({
     persentase_diskon: number;
   } | null>(null);
   const [promoError, setPromoError] = useState("");
+  const [availablePromos, setAvailablePromos] = useState<any[]>([]);
+  const [loadingPromos, setLoadingPromos] = useState(false);
+  const [showManualPromo, setShowManualPromo] = useState(false);
 
   // Availability checking state
   const [checkingAvail, setCheckingAvail] = useState(false);
@@ -54,7 +74,44 @@ export default function SpaceDetailPage({
     const formatted = now.toISOString().split("T")[0];
     setTanggal(formatted);
     loadSpaceDetail();
+    loadPromos();
   }, [spaceId]);
+
+  async function loadPromos() {
+    setLoadingPromos(true);
+    try {
+      const res: any = await apiFetcher("/api/diskon/active");
+      if (res?.status && Array.isArray(res.data)) {
+        setAvailablePromos(res.data);
+      }
+    } catch (err) {
+      console.warn("Gagal memuat promo aktif:", err);
+    } finally {
+      setLoadingPromos(false);
+    }
+  }
+
+  const handleSelectPromo = (promo: any) => {
+    // If currently selected, clicking again toggles it off
+    if (
+      appliedPromo?.id === promo.id ||
+      appliedPromo?.nama_diskon?.toUpperCase() === promo.nama_diskon?.toUpperCase()
+    ) {
+      setAppliedPromo(null);
+      setKodePromoInput("");
+      setPromoError("");
+      return;
+    }
+
+    const pct = Number(promo.persentase_diskon ?? promo.diskon ?? 0);
+    setAppliedPromo({
+      id: promo.id,
+      nama_diskon: promo.nama_diskon,
+      persentase_diskon: isNaN(pct) ? 0 : pct,
+    });
+    setKodePromoInput(promo.nama_diskon);
+    setPromoError("");
+  };
 
   // When date, time, or duration changes, check availability
   useEffect(() => {
@@ -155,14 +212,18 @@ export default function SpaceDetailPage({
         body: JSON.stringify({ nama_diskon: kodePromoInput.trim().toUpperCase() }),
       });
 
-      if (res?.status && res?.data) {
+      // Backend returns: { status: true, data: { valid: true, diskon: { id, nama_diskon, persentase_diskon } } }
+      const diskonData = res?.data?.diskon || res?.data || res?.diskon;
+      if (res?.status && diskonData && res?.data?.valid !== false) {
+        const pct = Number(diskonData.persentase_diskon ?? diskonData.diskon ?? 0);
         setAppliedPromo({
-          id: res.data.id,
-          nama_diskon: res.data.nama_diskon,
-          persentase_diskon: res.data.persentase_diskon,
+          id: diskonData.id,
+          nama_diskon: diskonData.nama_diskon || kodePromoInput.trim().toUpperCase(),
+          persentase_diskon: isNaN(pct) ? 0 : pct,
         });
+        setPromoError("");
       } else {
-        setPromoError(res?.message || "Kode promo tidak valid atau kedaluwarsa.");
+        setPromoError(res?.data?.message || res?.message || "Kode promo tidak valid atau kedaluwarsa.");
         setAppliedPromo(null);
       }
     } catch (err: any) {
@@ -240,9 +301,10 @@ export default function SpaceDetailPage({
   }
 
   const hargaPerJam = Number(space?.harga_per_jam || space?.harga || 0);
-  const subtotal = hargaPerJam * Number(durasi || 1);
-  const potonganDiskon = appliedPromo
-    ? Math.round((subtotal * appliedPromo.persentase_diskon) / 100)
+  const subtotal = Math.max(0, hargaPerJam * Number(durasi || 1));
+  const diskonPersen = Number(appliedPromo?.persentase_diskon || 0);
+  const potonganDiskon = appliedPromo && diskonPersen > 0
+    ? Math.round((subtotal * diskonPersen) / 100)
     : 0;
   const totalBayar = Math.max(0, subtotal - potonganDiskon);
 
@@ -278,8 +340,9 @@ export default function SpaceDetailPage({
                     ? "Private Office"
                     : "Personal Desk"}
                 </span>
-                <span className="absolute top-4 right-4 bg-slate-900/85 backdrop-blur-md text-white px-3.5 py-1.5 rounded-full text-xs font-bold shadow-sm">
-                  👥 Kapasitas: {space?.kapasitas || 1} Orang
+                <span className="absolute top-4 right-4 bg-slate-900/85 backdrop-blur-md text-white px-3.5 py-1.5 rounded-full text-xs font-bold shadow-sm flex items-center gap-1.5">
+                  <Users className="w-3.5 h-3.5" />
+                  <span>Kapasitas: {space?.kapasitas || 1} Orang</span>
                 </span>
               </div>
 
@@ -309,23 +372,29 @@ export default function SpaceDetailPage({
                     Fasilitas Termasuk
                   </h3>
                   <div className="grid grid-cols-2 sm:grid-cols-3 gap-2.5 text-xs font-semibold text-slate-700">
-                    <div className="p-2.5 rounded-xl bg-slate-50 border border-slate-100 flex items-center gap-2">
-                      <span></span> Wi-Fi 100Mbps
+                    <div className="p-2.5 rounded-xl bg-sky-50/60 border border-sky-100/80 flex items-center gap-2">
+                      <Wifi className="w-3.5 h-3.5 text-[#087EA4]" />
+                      <span>Wi-Fi 100Mbps</span>
                     </div>
-                    <div className="p-2.5 rounded-xl bg-slate-50 border border-slate-100 flex items-center gap-2">
-                      <span></span> Stopkontak Meja
+                    <div className="p-2.5 rounded-xl bg-sky-50/60 border border-sky-100/80 flex items-center gap-2">
+                      <Zap className="w-3.5 h-3.5 text-[#087EA4]" />
+                      <span>Stopkontak Meja</span>
                     </div>
-                    <div className="p-2.5 rounded-xl bg-slate-50 border border-slate-100 flex items-center gap-2">
-                      <span></span> Ruangan Ber-AC
+                    <div className="p-2.5 rounded-xl bg-sky-50/60 border border-sky-100/80 flex items-center gap-2">
+                      <Wind className="w-3.5 h-3.5 text-[#087EA4]" />
+                      <span>Ruangan Ber-AC</span>
                     </div>
-                    <div className="p-2.5 rounded-xl bg-slate-50 border border-slate-100 flex items-center gap-2">
-                      <span></span> Free Coffee & Water
+                    <div className="p-2.5 rounded-xl bg-sky-50/60 border border-sky-100/80 flex items-center gap-2">
+                      <Coffee className="w-3.5 h-3.5 text-[#087EA4]" />
+                      <span>Free Coffee & Water</span>
                     </div>
-                    <div className="p-2.5 rounded-xl bg-slate-50 border border-slate-100 flex items-center gap-2">
-                      <span></span> Kursi Ergonomis
+                    <div className="p-2.5 rounded-xl bg-sky-50/60 border border-sky-100/80 flex items-center gap-2">
+                      <CheckCircle2 className="w-3.5 h-3.5 text-[#087EA4]" />
+                      <span>Kursi Ergonomis</span>
                     </div>
-                    <div className="p-2.5 rounded-xl bg-slate-50 border border-slate-100 flex items-center gap-2">
-                      <span></span> QR Fast Check-In
+                    <div className="p-2.5 rounded-xl bg-sky-50/60 border border-sky-100/80 flex items-center gap-2">
+                      <ShieldCheck className="w-3.5 h-3.5 text-[#087EA4]" />
+                      <span>QR Fast Check-In</span>
                     </div>
                   </div>
                 </div>
@@ -404,48 +473,156 @@ export default function SpaceDetailPage({
                         : "bg-rose-50 text-rose-700 border border-rose-200"
                     }`}
                   >
-                    <span>{availStatus.available ? "✅" : "⚠️"}</span>
+                    {availStatus.available ? (
+                      <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
+                    ) : (
+                      <AlertCircle className="w-4 h-4 text-rose-600 shrink-0" />
+                    )}
                     <span className="font-semibold text-[11px]">
                       {checkingAvail ? "Memeriksa ketersediaan..." : availStatus.message}
                     </span>
                   </div>
                 )}
 
-                {/* Kode Promo / Diskon */}
-                <div>
-                  <label className="block text-[10px] font-bold text-slate-400 uppercase mb-1">
-                    Kode Diskon / Promo (Opsional)
-                  </label>
-                  <div className="flex gap-2">
-                    <input
-                      type="text"
-                      placeholder="Contoh: DISKONHEMAT20"
-                      value={kodePromoInput}
-                      onChange={(e) => setKodePromoInput(e.target.value.toUpperCase())}
-                      className="flex-1 bg-slate-50 border border-slate-200 px-4 py-2.5 rounded-2xl text-xs font-mono font-bold outline-none focus:border-[#087EA4]"
-                    />
+                {/* Pilihan Promo / Diskon */}
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between">
+                    <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-wider">
+                      Pilihan Promo Diskon
+                    </label>
+                    {availablePromos.length > 0 && (
+                      <span className="text-[10px] font-semibold text-[#087EA4] bg-sky-50 px-2 py-0.5 rounded-full border border-sky-100">
+                        {availablePromos.length} Promo Tersedia
+                      </span>
+                    )}
+                  </div>
+
+                  {/* List Promo Aktif yang Bisa Langsung Diklik */}
+                  {loadingPromos ? (
+                    <div className="p-3 rounded-2xl bg-slate-50 border border-slate-200 text-center text-xs text-slate-400">
+                      Memuat daftar promo aktif...
+                    </div>
+                  ) : availablePromos.length > 0 ? (
+                    <div className="space-y-2">
+                      {availablePromos.map((promo: any) => {
+                        const isSelected =
+                          appliedPromo?.id === promo.id ||
+                          appliedPromo?.nama_diskon?.toUpperCase() ===
+                            promo.nama_diskon?.toUpperCase();
+                        const diskonAngka = Number(
+                          promo.persentase_diskon ?? promo.diskon ?? 0
+                        );
+
+                        return (
+                          <div
+                            key={promo.id || promo.nama_diskon}
+                            onClick={() => handleSelectPromo(promo)}
+                            role="button"
+                            tabIndex={0}
+                            className={`p-3 rounded-2xl border transition-all cursor-pointer flex items-center justify-between gap-3 text-left ${
+                              isSelected
+                                ? "bg-sky-50/90 border-[#087EA4] ring-2 ring-[#087EA4]/25 shadow-xs"
+                                : "bg-white hover:bg-slate-50/80 border-slate-200/90 hover:border-sky-300"
+                            }`}
+                          >
+                            <div className="flex items-center gap-3 min-w-0">
+                              <div
+                                className={`w-8 h-8 rounded-xl flex items-center justify-center shrink-0 ${
+                                  isSelected
+                                    ? "bg-[#087EA4] text-white"
+                                    : "bg-sky-50 text-[#087EA4] border border-sky-100"
+                                }`}
+                              >
+                                <Tag className="w-4 h-4" />
+                              </div>
+                              <div className="min-w-0">
+                                <div className="flex items-center gap-1.5 flex-wrap">
+                                  <span className="font-black text-xs text-slate-900 tracking-wide uppercase truncate">
+                                    {promo.nama_diskon}
+                                  </span>
+                                  <span className="bg-sky-100 text-[#087EA4] font-black text-[10px] px-2 py-0.5 rounded-full shrink-0">
+                                    Diskon {diskonAngka}%
+                                  </span>
+                                </div>
+                                <p className="text-[10px] text-slate-400 font-medium truncate mt-0.5">
+                                  Klik untuk {isSelected ? "melepas" : "menerapkan"} promo
+                                </p>
+                              </div>
+                            </div>
+
+                            <div className="shrink-0">
+                              {isSelected ? (
+                                <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-[#087EA4] text-white text-[10px] font-bold shadow-xs">
+                                  <Check className="w-3 h-3 stroke-[3]" />
+                                  <span>Terpakai</span>
+                                </span>
+                              ) : (
+                                <span className="inline-flex items-center px-2.5 py-1 rounded-full bg-slate-100 text-slate-600 text-[10px] font-bold border border-slate-200/80">
+                                  Pakai
+                                </span>
+                              )}
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  ) : null}
+
+                  {/* Toggle Manual Input jika user punya kode khusus atau tidak ada promo API */}
+                  <div className="pt-1">
                     <button
                       type="button"
-                      onClick={handleCheckPromo}
-                      disabled={checkingPromo || !kodePromoInput.trim()}
-                      className="bg-slate-100 hover:bg-slate-200 text-slate-800 px-4 py-2.5 rounded-2xl text-xs font-bold transition-all disabled:opacity-50"
+                      onClick={() => setShowManualPromo(!showManualPromo)}
+                      className="text-[11px] font-bold text-slate-500 hover:text-[#087EA4] inline-flex items-center gap-1 transition-colors"
                     >
-                      {checkingPromo ? "Cek..." : "Gunakan"}
+                      <span>
+                        {showManualPromo
+                          ? "Tutup input manual"
+                          : "Punya kode voucher lain? Masukkan manual"}
+                      </span>
+                      {showManualPromo ? (
+                        <ChevronUp className="w-3.5 h-3.5" />
+                      ) : (
+                        <ChevronDown className="w-3.5 h-3.5" />
+                      )}
                     </button>
+
+                    {(showManualPromo || availablePromos.length === 0) && (
+                      <div className="mt-2 flex gap-2">
+                        <input
+                          type="text"
+                          placeholder="Contoh: DISKONHEMAT20"
+                          value={kodePromoInput}
+                          onChange={(e) => setKodePromoInput(e.target.value.toUpperCase())}
+                          className="flex-1 bg-slate-50 border border-slate-200 px-4 py-2.5 rounded-2xl text-xs font-mono font-bold outline-none focus:border-[#087EA4]"
+                        />
+                        <button
+                          type="button"
+                          onClick={handleCheckPromo}
+                          disabled={checkingPromo || !kodePromoInput.trim()}
+                          className="bg-slate-100 hover:bg-slate-200 text-slate-800 px-4 py-2.5 rounded-2xl text-xs font-bold transition-all disabled:opacity-50"
+                        >
+                          {checkingPromo ? "Cek..." : "Gunakan"}
+                        </button>
+                      </div>
+                    )}
                   </div>
 
                   {appliedPromo && (
-                    <div className="mt-2 p-2 bg-emerald-50 text-emerald-700 rounded-xl text-[11px] font-bold flex items-center justify-between">
-                      <span>🎉 Promo {appliedPromo.nama_diskon} Aktif! (-{appliedPromo.persentase_diskon}%)</span>
+                    <div className="mt-2 p-2.5 bg-sky-50 text-[#087EA4] border border-sky-100/90 rounded-xl text-[11px] font-bold flex items-center justify-between">
+                      <span className="flex items-center gap-1.5">
+                        <Tag className="w-3.5 h-3.5 text-[#087EA4]" />
+                        <span>Promo {appliedPromo.nama_diskon} Aktif! (-{diskonPersen}%)</span>
+                      </span>
                       <button
                         type="button"
                         onClick={() => {
                           setAppliedPromo(null);
                           setKodePromoInput("");
                         }}
-                        className="text-emerald-800 hover:underline"
+                        className="text-[#087EA4] hover:underline cursor-pointer font-semibold"
                       >
-                        Hapus
+                        Batal
                       </button>
                     </div>
                   )}
@@ -471,9 +648,9 @@ export default function SpaceDetailPage({
                     <span>Subtotal Biaya</span>
                     <span>{formatRupiah(subtotal)}</span>
                   </div>
-                  {appliedPromo && (
-                    <div className="flex justify-between text-emerald-600 font-bold">
-                      <span>Potongan Diskon ({appliedPromo.persentase_diskon}%)</span>
+                  {appliedPromo && diskonPersen > 0 && (
+                    <div className="flex justify-between text-[#087EA4] font-bold">
+                      <span>Potongan Diskon ({diskonPersen}%)</span>
                       <span>- {formatRupiah(potonganDiskon)}</span>
                     </div>
                   )}

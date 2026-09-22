@@ -294,8 +294,13 @@ export default function HomePage() {
                 </div>
                 <div>
                   <div className="text-[11px] font-extrabold text-slate-900 leading-tight">1.200+ Member</div>
-                  <div className="text-[9px] text-amber-500 font-bold flex items-center gap-0.5">
-                    ★★★★★ <span className="text-slate-500 font-semibold">(4.9)</span>
+                  <div className="text-[9px] text-amber-500 font-bold flex items-center gap-1">
+                    <span className="flex items-center">
+                      {[1, 2, 3, 4, 5].map((i) => (
+                        <Star key={i} className="w-2.5 h-2.5 fill-amber-400 text-amber-400" />
+                      ))}
+                    </span>
+                    <span className="text-slate-500 font-semibold">(4.9)</span>
                   </div>
                 </div>
               </div>
@@ -347,7 +352,8 @@ export default function HomePage() {
                   <div className="flex items-center justify-between text-[10px] px-0.5">
                     <span className="text-slate-600 font-semibold">Lantai 14 • Ocean View</span>
                     <span className="text-amber-500 font-bold flex items-center gap-0.5">
-                      ★ 4.9
+                      <Star className="w-2.5 h-2.5 fill-amber-400 text-amber-400" />
+                      <span>4.9</span>
                     </span>
                   </div>
                 </div>
@@ -614,8 +620,8 @@ export default function HomePage() {
           {/* Card 1: Personal Desk */}
           <div className="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-xs hover:shadow-md hover:border-sky-300 transition-all space-y-3.5 flex flex-col justify-between">
             <div className="space-y-2.5">
-              <div className="w-10 h-10 rounded-xl bg-sky-50 text-[#087EA4] flex items-center justify-center text-lg font-bold">
-                💻
+              <div className="w-10 h-10 rounded-xl bg-sky-50 text-[#087EA4] flex items-center justify-center">
+                <Monitor className="w-5 h-5 text-[#087EA4]" />
               </div>
               <h3 className="text-base font-bold text-slate-900">Personal Desk</h3>
               <p className="text-xs text-slate-500 leading-relaxed">
@@ -633,8 +639,8 @@ export default function HomePage() {
           {/* Card 2: Meeting Room */}
           <div className="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-xs hover:shadow-md hover:border-sky-300 transition-all space-y-3.5 flex flex-col justify-between">
             <div className="space-y-2.5">
-              <div className="w-10 h-10 rounded-xl bg-sky-50 text-[#087EA4] flex items-center justify-center text-lg font-bold">
-                👥
+              <div className="w-10 h-10 rounded-xl bg-sky-50 text-[#087EA4] flex items-center justify-center">
+                <Users className="w-5 h-5 text-[#087EA4]" />
               </div>
               <h3 className="text-base font-bold text-slate-900">Meeting Room</h3>
               <p className="text-xs text-slate-500 leading-relaxed">
@@ -652,8 +658,8 @@ export default function HomePage() {
           {/* Card 3: Private Office */}
           <div className="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-xs hover:shadow-md hover:border-sky-300 transition-all space-y-3.5 flex flex-col justify-between">
             <div className="space-y-2.5">
-              <div className="w-10 h-10 rounded-xl bg-sky-50 text-[#087EA4] flex items-center justify-center text-lg font-bold">
-                
+              <div className="w-10 h-10 rounded-xl bg-sky-50 text-[#087EA4] flex items-center justify-center">
+                <Building2 className="w-5 h-5 text-[#087EA4]" />
               </div>
               <h3 className="text-base font-bold text-slate-900">Private Office</h3>
               <p className="text-xs text-slate-500 leading-relaxed">
@@ -768,8 +774,9 @@ export default function HomePage() {
                       >
                         {isMeeting ? "Meeting Room" : isOffice ? "Private Office" : "Personal Desk"}
                       </span>
-                      <span className="absolute top-3 right-3 bg-slate-900/80 backdrop-blur-md text-white px-2 py-0.5 rounded-full text-[9px] font-bold shadow-xs">
-                        👥 {space.kapasitas || 1} Orang
+                      <span className="absolute top-3 right-3 bg-slate-900/80 backdrop-blur-md text-white px-2 py-0.5 rounded-full text-[9px] font-bold shadow-xs flex items-center gap-1">
+                        <Users className="w-2.5 h-2.5" />
+                        <span>{space.kapasitas || 1} Orang</span>
                       </span>
                     </div>
 
@@ -782,14 +789,17 @@ export default function HomePage() {
                       </p>
 
                       <div className="flex flex-wrap gap-1.5 pt-1">
-                        <span className="inline-flex items-center gap-1 text-[9px] font-medium text-slate-600 bg-slate-100 px-2 py-0.5 rounded-md">
-                          <Wifi className="w-2.5 h-2.5 text-[#087EA4]" /> Wi-Fi
+                        <span className="inline-flex items-center gap-1.5 text-[10px] font-semibold text-[#087EA4] bg-sky-50 border border-sky-100/90 px-2.5 py-0.5 rounded-lg">
+                          <Wifi className="w-3 h-3 text-[#087EA4]" />
+                          <span>Wi-Fi</span>
                         </span>
-                        <span className="inline-flex items-center gap-1 text-[9px] font-medium text-slate-600 bg-slate-100 px-2 py-0.5 rounded-md">
-                          <Coffee className="w-2.5 h-2.5 text-amber-600" /> Free Coffee
+                        <span className="inline-flex items-center gap-1.5 text-[10px] font-semibold text-[#087EA4] bg-sky-50 border border-sky-100/90 px-2.5 py-0.5 rounded-lg">
+                          <Coffee className="w-3 h-3 text-[#087EA4]" />
+                          <span>Free Coffee</span>
                         </span>
-                        <span className="inline-flex items-center gap-1 text-[9px] font-medium text-slate-600 bg-slate-100 px-2 py-0.5 rounded-md">
-                          <ShieldCheck className="w-2.5 h-2.5 text-emerald-600" /> QR Access
+                        <span className="inline-flex items-center gap-1.5 text-[10px] font-semibold text-[#087EA4] bg-sky-50 border border-sky-100/90 px-2.5 py-0.5 rounded-lg">
+                          <ShieldCheck className="w-3 h-3 text-[#087EA4]" />
+                          <span>QR Access</span>
                         </span>
                       </div>
                     </div>

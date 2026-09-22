@@ -121,7 +121,7 @@ export default function MemberHistoryPage() {
                 Histori Pemesanan
               </h1>
               <p className="text-xs text-slate-400 pt-1">
-                Laporan riwayat reservasi dan total pengeluaran coworking space bulanan.
+                Laporan riwayat reservasi coworking space bulanan.
               </p>
             </div>
 
@@ -130,7 +130,7 @@ export default function MemberHistoryPage() {
               <select
                 value={selectedMonth}
                 onChange={(e) => setSelectedMonth(Number(e.target.value))}
-                className="bg-transparent text-xs font-bold text-slate-800 px-3 py-1.5 outline-none"
+                className="bg-transparent text-xs font-bold text-slate-800 px-3 py-1.5 outline-none cursor-pointer"
               >
                 {monthNames.map((name, idx) => (
                   <option key={name} value={idx + 1}>
@@ -142,7 +142,7 @@ export default function MemberHistoryPage() {
               <select
                 value={selectedYear}
                 onChange={(e) => setSelectedYear(Number(e.target.value))}
-                className="bg-transparent text-xs font-bold text-slate-800 px-3 py-1.5 outline-none border-l border-slate-200"
+                className="bg-transparent text-xs font-bold text-slate-800 px-3 py-1.5 outline-none border-l border-slate-200 cursor-pointer"
               >
                 {[2025, 2026, 2027].map((y) => (
                   <option key={y} value={y}>
@@ -153,24 +153,20 @@ export default function MemberHistoryPage() {
             </div>
           </div>
 
-          {/* Wireframe A-6 Stats Cards */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
-            <div className="bg-linear-to-br from-[#087EA4] to-[#0369A1] p-6 rounded-3xl text-white shadow-md space-y-1">
-              <span className="text-[10px] uppercase font-bold text-sky-200 tracking-wider">
-                Total Pengeluaran ({monthNames[selectedMonth - 1]} {selectedYear})
+          {/* Stats Summary */}
+          <div className="pt-2">
+            <div className="bg-white p-5 sm:p-6 rounded-3xl border border-sky-100 text-slate-800 shadow-xs flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2">
+              <div>
+                <span className="text-[10px] uppercase font-bold text-slate-400 tracking-wider">
+                  Total Reservasi Selesai / Terdaftar
+                </span>
+                <p className="text-2xl sm:text-3xl font-black text-[#087EA4]">
+                  {historyData.total_reservasi} <span className="text-base font-normal text-slate-400">Transaksi</span>
+                </p>
+              </div>
+              <span className="text-xs font-semibold text-slate-500 bg-slate-50 border border-slate-100 px-3 py-1.5 rounded-xl">
+                Periode: {monthNames[selectedMonth - 1]} {selectedYear}
               </span>
-              <p className="text-2xl sm:text-3xl font-black">
-                {formatRupiah(historyData.total_pengeluaran)}
-              </p>
-            </div>
-
-            <div className="bg-white p-6 rounded-3xl border border-sky-100 text-slate-800 shadow-xs space-y-1">
-              <span className="text-[10px] uppercase font-bold text-slate-400 tracking-wider">
-                Total Reservasi Selesai / Terdaftar
-              </span>
-              <p className="text-2xl sm:text-3xl font-black text-[#087EA4]">
-                {historyData.total_reservasi} <span className="text-base font-normal text-slate-400">Transaksi</span>
-              </p>
             </div>
           </div>
         </div>
@@ -182,8 +178,7 @@ export default function MemberHistoryPage() {
             <p className="text-xs text-slate-400 font-bold">Memuat histori pemesanan...</p>
           </div>
         ) : historyData.items.length === 0 ? (
-          <div className="bg-white p-12 rounded-3xl text-center border border-slate-200 space-y-3">
-            <div className="text-4xl"></div>
+          <div className="bg-white p-12 rounded-3xl text-center border border-slate-200 space-y-2">
             <h3 className="font-bold text-slate-800 text-sm">Tidak Ada Transaksi</h3>
             <p className="text-xs text-slate-400">
               Belum ada riwayat reservasi pada {monthNames[selectedMonth - 1]} {selectedYear}.

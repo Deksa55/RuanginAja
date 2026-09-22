@@ -4,6 +4,16 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { clearAuthSession, getStoredUser, apiFetcher } from "../../lib/api/client";
+import {
+  LayoutDashboard,
+  Building2,
+  Users,
+  Tag,
+  TrendingUp,
+  Settings,
+  Globe,
+  LogOut,
+} from "lucide-react";
 
 export default function AdminSidebar() {
   const pathname = usePathname();
@@ -59,36 +69,36 @@ export default function AdminSidebar() {
   const navItems = [
     {
       label: "Dashboard & Reservasi",
-      icon: "📊",
+      icon: LayoutDashboard,
       href: "/admin/reservations",
       badge: pendingCount > 0 ? `${pendingCount} Baru` : null,
       badgeColor: "bg-amber-500 text-white animate-pulse",
     },
     {
       label: "Kelola Ruangan (Spaces)",
-      icon: "🏢",
+      icon: Building2,
       href: "/admin/spaces",
       badge: spacesCount !== null ? `${spacesCount} Ruang` : null,
       badgeColor: spacesCount === 0 ? "bg-slate-200 text-slate-600" : "bg-sky-100 text-[#087EA4]",
     },
     {
       label: "Data Member / Tamu",
-      icon: "👥",
+      icon: Users,
       href: "/admin/members",
     },
     {
       label: "Kode Promo & Diskon",
-      icon: "🏷️",
+      icon: Tag,
       href: "/admin/promotions",
     },
     {
       label: "Laporan Pendapatan",
-      icon: "📈",
+      icon: TrendingUp,
       href: "/admin/report",
     },
     {
       label: "Profil Lokasi Coworking",
-      icon: "⚙️",
+      icon: Settings,
       href: "/admin/profile",
     },
   ];
@@ -128,6 +138,7 @@ export default function AdminSidebar() {
         <nav className="space-y-1.5 pt-2">
           {navItems.map((item) => {
             const isActive = pathname === item.href;
+            const Icon = item.icon;
             return (
               <Link
                 key={item.href}
@@ -138,7 +149,7 @@ export default function AdminSidebar() {
                     : "text-slate-600 hover:text-[#087EA4] hover:bg-sky-50/70"
                 }`}
               >
-                <span className="text-base">{item.icon}</span>
+                <Icon className={`w-4 h-4 shrink-0 ${isActive ? "text-white" : "text-slate-500"}`} />
                 <span className="flex-1">{item.label}</span>
                 {item.badge && (
                   <span className={`text-[10px] font-black px-2 py-0.5 rounded-full ${item.badgeColor || "bg-sky-100 text-[#087EA4]"}`}>
@@ -157,13 +168,15 @@ export default function AdminSidebar() {
           href="/"
           className="flex items-center gap-2.5 px-4 py-2.5 rounded-xl text-slate-600 hover:text-slate-900 hover:bg-slate-100 text-xs font-bold transition-all"
         >
-          <span>🌐</span> Kembali ke Web Utama
+          <Globe className="w-4 h-4 text-slate-400" />
+          <span>Kembali ke Web Utama</span>
         </Link>
         <button
           onClick={handleLogout}
-          className="w-full flex items-center gap-2.5 px-4 py-2.5 rounded-xl text-rose-600 hover:text-rose-700 hover:bg-rose-50 text-xs font-bold transition-all text-left"
+          className="w-full flex items-center gap-2.5 px-4 py-2.5 rounded-xl text-rose-600 hover:text-rose-700 hover:bg-rose-50 text-xs font-bold transition-all text-left cursor-pointer"
         >
-          <span>🚪</span> Keluar / Logout
+          <LogOut className="w-4 h-4 text-rose-500" />
+          <span>Keluar / Logout</span>
         </button>
       </div>
     </aside>

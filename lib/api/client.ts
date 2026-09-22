@@ -220,17 +220,28 @@ export function resolveSpaceImage(space?: any): string {
 }
 
 export function resolveMemberAvatar(member?: any): string {
-  if (member?.foto && typeof member.foto === "string" && member.foto.trim()) {
-    if (member.foto.startsWith("http")) {
-      let url = member.foto.replace(/^http:\/\//i, "https://");
+  let foto = member?.foto || member?.member?.foto;
+
+  // Check client-side cached avatar if backend didn't persist foto on the user object
+  if (!foto && typeof window !== "undefined") {
+    const key = member?.username || member?.member?.username || member?.nama_member;
+    if (key) {
+      const cached = localStorage.getItem(`avatar_${key}`);
+      if (cached) foto = cached;
+    }
+  }
+
+  if (foto && typeof foto === "string" && foto.trim()) {
+    if (foto.startsWith("http") || foto.startsWith("blob:") || foto.startsWith("data:")) {
+      let url = foto.replace(/^http:\/\//i, "https://");
       if (url.includes("smktelkom-mlg.sch.id/uploads/members") && !url.includes("/coworking/")) {
         url = url.replace("smktelkom-mlg.sch.id/uploads/members", "smktelkom-mlg.sch.id/coworking/uploads/members");
       }
       return url;
     }
-    return `${API_BASE_URL}/uploads/members/${member.foto}`;
+    return `${API_BASE_URL}/uploads/members/${foto}`;
   }
-  const name = member?.nama_member || member?.nama || "Member";
+  const name = member?.nama_member || member?.member?.nama_member || member?.nama || "Member";
   return `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=087EA4&color=fff&bold=true&size=128`;
 }
 
@@ -252,30 +263,81 @@ export function formatRupiah(amount?: number | string | null): string {
  */
 export function resolveReservationTotal(item?: any): number {
   if (!item) return 0;
-  if (typeof item.total_bayar === "number" && item.total_bayar > 0) return item.total_bayar;
-  if (typeof item.total_harga === "number" && item.total_harga > 0) return item.total_harga;
-  if (typeof item.total === "number" && item.total > 0) return item.total;
-  if (item.price_breakdown?.total_harga) return Number(item.price_breakdown.total_harga);
 
-  // Periksa array detail_reservasi (standar controller UKK RPL)
+  // 1. Cek rincian pembayaran e-ticket jika ada
+  if (item.rincian_pembayaran?.total_dibayar != null) {
+    const val = Number(item.rincian_pembayaran.total_dibayar);
+    if (!isNaN(val) && val > 0) return val;
+  }
+
+  // 2. Cek total_bayar langsung dari server
+  if (item.total_bayar != null) {
+    const val = Number(item.total_bayar);
+    if (!isNaN(val) && val > 0) return val;
+  }
+
+  // 3. Cek total_harga dari server
+  if (item.total_harga != null) {
+    const val = Number(item.total_harga);
+    if (!isNaN(val) && val > 0) return val;
+  }
+
+  // 4. Cek total dari server
+  if (item.total != null) {
+    const val = Number(item.total);
+    if (!isNaN(val) && val > 0) return val;
+  }
+
+  // 5. Cek price_breakdown
+  if (item.price_breakdown?.total_harga != null) {
+    const val = Number(item.price_breakdown.total_harga);
+    if (!isNaN(val) && val > 0) return val;
+  }
+
+  // Hitung persentase diskon jika ada pada item
+  const diskonPct = Number(
+    item.diskon?.persentase_diskon ??
+      item.persentase_diskon ??
+      item.diskon_persen ??
+      0
+  );
+
+  // 6. Periksa array detail_reservasi (standar controller UKK RPL)
   if (Array.isArray(item.detail_reservasi) && item.detail_reservasi.length > 0) {
     const sum = item.detail_reservasi.reduce((acc: number, d: any) => {
-      const val = Number(d.total_harga || d.subtotal || d.harga || 0);
+      const val = Number(d.total_harga ?? d.subtotal ?? d.harga ?? 0);
       return acc + (isNaN(val) ? 0 : val);
     }, 0);
-    if (sum > 0) return sum;
+    if (sum > 0) {
+      if (diskonPct > 0) {
+        return Math.max(0, Math.round(sum - (sum * diskonPct) / 100));
+      }
+      return sum;
+    }
 
     // Fallback: harga_per_jam space * durasi_jam
     const firstDetail = item.detail_reservasi[0];
-    const hourly = Number(firstDetail?.space?.harga_per_jam || firstDetail?.space?.harga || 0);
-    const dur = Number(item.durasi_jam || item.durasi || 1);
-    if (hourly > 0) return hourly * dur;
+    const hourly = Number(firstDetail?.space?.harga_per_jam ?? firstDetail?.space?.harga ?? 0);
+    const dur = Number(item.durasi_jam ?? item.durasi ?? 1);
+    if (hourly > 0) {
+      const sub = hourly * dur;
+      if (diskonPct > 0) {
+        return Math.max(0, Math.round(sub - (sub * diskonPct) / 100));
+      }
+      return sub;
+    }
   }
 
-  // Fallback: harga space di root * durasi_jam
-  const spaceHourly = Number(item.space?.harga_per_jam || item.space?.harga || 0);
-  const dur = Number(item.durasi_jam || item.durasi || 1);
-  if (spaceHourly > 0) return spaceHourly * dur;
+  // 7. Fallback: harga space di root * durasi_jam
+  const spaceHourly = Number(item.space?.harga_per_jam ?? item.space?.harga ?? 0);
+  const dur = Number(item.durasi_jam ?? item.durasi ?? 1);
+  if (spaceHourly > 0) {
+    const sub = spaceHourly * dur;
+    if (diskonPct > 0) {
+      return Math.max(0, Math.round(sub - (sub * diskonPct) / 100));
+    }
+    return sub;
+  }
 
   return 0;
 }

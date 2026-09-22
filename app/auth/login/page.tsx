@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { apiFetcher } from "../../../lib/api/client";
+import { AlertCircle } from "lucide-react";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -36,7 +37,32 @@ export default function LoginPage() {
         localStorage.setItem("token", token);
         localStorage.setItem("access_token", token);
         if (user) {
-          localStorage.setItem("user", JSON.stringify({ ...user, role }));
+          const username = user.username || form.username;
+          const cachedAvatar = localStorage.getItem(`avatar_${username}`);
+          const savedRegStr = localStorage.getItem(`registered_profile_${username}`);
+          let mergedUser = { ...user, role };
+          if (savedRegStr) {
+            try {
+              const regData = JSON.parse(savedRegStr);
+              mergedUser = {
+                ...mergedUser,
+                nama_member: regData.nama_member || mergedUser.nama_member,
+                instansi: regData.instansi || mergedUser.instansi,
+                alamat: regData.alamat || mergedUser.alamat,
+                telp: regData.telp || mergedUser.telp,
+                foto: regData.foto || mergedUser.foto,
+                member: {
+                  ...(mergedUser.member || {}),
+                  ...regData,
+                },
+              };
+            } catch {}
+          }
+          if (cachedAvatar && !mergedUser.foto) {
+            mergedUser.foto = cachedAvatar;
+            if (mergedUser.member) mergedUser.member.foto = cachedAvatar;
+          }
+          localStorage.setItem("user", JSON.stringify(mergedUser));
         }
 
         if (role === "admin_space") {
@@ -113,8 +139,9 @@ export default function LoginPage() {
           </div>
 
           {error && (
-            <div className="p-3.5 bg-rose-50 text-rose-600 text-xs rounded-2xl font-semibold border border-rose-200 animate-fadeIn">
-              ⚠️ {error}
+            <div className="p-3.5 bg-rose-50 text-rose-600 text-xs rounded-2xl font-semibold border border-rose-200 animate-fadeIn flex items-center gap-2">
+              <AlertCircle className="w-4 h-4 shrink-0" />
+              <span>{error}</span>
             </div>
           )}
 

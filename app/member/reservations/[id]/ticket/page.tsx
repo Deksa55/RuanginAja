@@ -11,6 +11,7 @@ import {
   resolveReservationSpaceName,
   formatTanggal,
 } from "../../../../../lib/api/client";
+import { Ticket, Building2, Copy, Check, Printer } from "lucide-react";
 
 export default function TicketPage({
   params,
@@ -124,7 +125,7 @@ export default function TicketPage({
         <Navbar />
         <div className="flex-1 flex items-center justify-center p-4">
           <div className="bg-white p-8 rounded-3xl border border-slate-200/90 text-center max-w-sm space-y-4 shadow-sm">
-            <div className="text-4xl">🎟️</div>
+            <Ticket className="w-12 h-12 text-slate-300 mx-auto" />
             <h3 className="font-black text-sm text-slate-900">Tiket Belum Tersedia</h3>
             <p className="text-xs text-slate-500 leading-relaxed">
               {error || "E-Ticket hanya dapat diakses setelah reservasi disetujui oleh admin."}
@@ -169,8 +170,9 @@ export default function TicketPage({
               <span className="text-[10px] font-black uppercase tracking-widest text-[#087EA4] block">
                 E-Ticket & Bukti Reservasi Digital
               </span>
-              <p className="text-xs font-bold text-slate-700">
-                🏢 {ticket.coworking_space?.nama || "RuanginAja Coworking"}
+              <p className="text-xs font-bold text-slate-700 flex items-center gap-1.5">
+                <Building2 className="w-3.5 h-3.5 text-slate-400 shrink-0" />
+                <span>{ticket.coworking_space?.nama || "RuanginAja Coworking"}</span>
               </p>
             </div>
 
@@ -207,10 +209,20 @@ export default function TicketPage({
                 </span>
                 <button
                   onClick={handleCopy}
-                  className="no-print bg-white hover:bg-sky-50 text-[#087EA4] border border-sky-200 px-2.5 py-1.5 rounded-xl text-xs font-bold transition-all shadow-xs cursor-pointer"
+                  className="no-print bg-white hover:bg-sky-50 text-[#087EA4] border border-sky-200 px-2.5 py-1.5 rounded-xl text-xs font-bold transition-all shadow-xs cursor-pointer inline-flex items-center gap-1"
                   title="Salin Kode"
                 >
-                  {copied ? "✓ Tersalin" : "📋 Salin"}
+                  {copied ? (
+                    <>
+                      <Check className="w-3 h-3 text-emerald-600" />
+                      <span>Tersalin</span>
+                    </>
+                  ) : (
+                    <>
+                      <Copy className="w-3 h-3" />
+                      <span>Salin</span>
+                    </>
+                  )}
                 </button>
               </div>
               {ticket.e_ticket_number && (
@@ -292,7 +304,7 @@ export default function TicketPage({
               onClick={handlePrint}
               className="w-full bg-gradient-to-r from-[#087EA4] to-[#0284C7] hover:from-[#075985] hover:to-[#0369A1] text-white font-bold py-3.5 rounded-2xl text-xs transition-all shadow-md shadow-sky-500/25 hover:scale-[1.01] active:scale-95 flex items-center justify-center gap-2 cursor-pointer"
             >
-              <span>🖨️</span>
+              <Printer className="w-4 h-4" />
               <span>Cetak / Unduh Nota E-Ticket (PDF)</span>
             </button>
 

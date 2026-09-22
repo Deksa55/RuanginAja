@@ -7,6 +7,17 @@ import {
   uploadMedia,
   getActiveMakerId,
 } from "../../../lib/api/client";
+import {
+  Search,
+  Users,
+  Building2,
+  Phone,
+  MapPin,
+  Edit2,
+  Trash2,
+  X,
+  Upload,
+} from "lucide-react";
 
 interface MemberItem {
   id: number;
@@ -201,7 +212,7 @@ export default function AdminMembersPage() {
             onChange={(e) => setSearch(e.target.value)}
             className="w-full bg-slate-50 border border-slate-200 pl-10 pr-4 py-2.5 rounded-xl text-xs outline-none focus:border-[#087EA4]"
           />
-          <span className="absolute left-3.5 top-3 text-slate-400 text-xs">🔍</span>
+          <Search className="w-4 h-4 absolute left-3.5 top-3 text-slate-400" />
         </div>
 
         <span className="text-xs font-bold text-slate-600">
@@ -217,7 +228,7 @@ export default function AdminMembersPage() {
         </div>
       ) : members.length === 0 ? (
         <div className="bg-white p-12 rounded-3xl text-center border border-slate-200 space-y-3">
-          <div className="text-4xl">👥</div>
+          <Users className="w-10 h-10 text-slate-300 mx-auto" />
           <h3 className="font-bold text-slate-800 text-sm">Belum Ada Member di RuanginAja</h3>
           <p className="text-xs text-slate-400 max-w-md mx-auto">
             Hanya member yang terdaftar dengan APP_KEY ini yang ditampilkan di panel Anda. Klik tombol <b>&ldquo;+ Tambah Member Baru&rdquo;</b> di atas untuk menambahkan pelanggan.
@@ -241,33 +252,38 @@ export default function AdminMembersPage() {
                     {m.nama_member}
                   </h3>
                   <p className="text-xs text-[#087EA4] font-semibold">@{m.username}</p>
-                  <p className="text-[11px] text-slate-500 truncate">
-                    🏢 {m.instansi || "Umum / Freelancer"}
+                  <p className="text-[11px] text-slate-500 truncate flex items-center gap-1.5">
+                    <Building2 className="w-3.5 h-3.5 text-slate-400 shrink-0" />
+                    <span>{m.instansi || "Umum / Freelancer"}</span>
                   </p>
                 </div>
               </div>
 
               <div className="space-y-1.5 text-xs text-slate-500 bg-slate-50 p-3 rounded-2xl border border-slate-100">
-                <p className="truncate">
-                  📞 <b>{m.telp || "-"}</b>
+                <p className="truncate flex items-center gap-1.5">
+                  <Phone className="w-3.5 h-3.5 text-slate-400 shrink-0" />
+                  <b>{m.telp || "-"}</b>
                 </p>
-                <p className="truncate text-[11px]">
-                  📍 {m.alamat || "Alamat belum diatur"}
+                <p className="truncate text-[11px] flex items-center gap-1.5">
+                  <MapPin className="w-3.5 h-3.5 text-slate-400 shrink-0" />
+                  <span>{m.alamat || "Alamat belum diatur"}</span>
                 </p>
               </div>
 
               <div className="pt-2 border-t border-slate-100 flex items-center justify-end gap-2">
                 <button
                   onClick={() => handleOpenEdit(m)}
-                  className="bg-slate-100 hover:bg-slate-200 text-slate-700 px-3 py-1.5 rounded-xl text-xs font-bold transition-all"
+                  className="bg-slate-100 hover:bg-slate-200 text-slate-700 px-3 py-1.5 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5"
                 >
-                  ✏️ Ubah
+                  <Edit2 className="w-3.5 h-3.5" />
+                  <span>Ubah</span>
                 </button>
                 <button
                   onClick={() => handleDelete(m.id, m.nama_member)}
-                  className="bg-rose-50 hover:bg-rose-100 text-rose-600 px-3 py-1.5 rounded-xl text-xs font-bold transition-all border border-rose-200"
+                  className="bg-rose-50 hover:bg-rose-100 text-rose-600 px-3 py-1.5 rounded-xl text-xs font-bold transition-all border border-rose-200 flex items-center gap-1.5"
                 >
-                  🗑️ Hapus
+                  <Trash2 className="w-3.5 h-3.5" />
+                  <span>Hapus</span>
                 </button>
               </div>
             </div>
@@ -290,9 +306,9 @@ export default function AdminMembersPage() {
               </div>
               <button
                 onClick={() => setIsModalOpen(false)}
-                className="text-slate-400 hover:text-slate-700 text-xl font-bold"
+                className="text-slate-400 hover:text-slate-700 transition-colors"
               >
-                ✕
+                <X className="w-5 h-5" />
               </button>
             </div>
 
@@ -403,9 +419,10 @@ export default function AdminMembersPage() {
                     type="button"
                     onClick={() => fileInputRef.current?.click()}
                     disabled={uploadingImage}
-                    className="bg-slate-100 hover:bg-slate-200 text-slate-800 px-3.5 py-2 rounded-xl text-xs font-bold transition-all"
+                    className="bg-slate-100 hover:bg-slate-200 text-slate-800 px-3.5 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5"
                   >
-                    {uploadingImage ? "Mengunggah..." : "📁 Pilih Foto Profil"}
+                    <Upload className="w-3.5 h-3.5 text-slate-600" />
+                    <span>{uploadingImage ? "Mengunggah..." : "Pilih Foto Profil"}</span>
                   </button>
                   <span className="text-xs text-slate-400 truncate">
                     {form.foto ? `Foto: ${form.foto}` : "Belum ada foto"}

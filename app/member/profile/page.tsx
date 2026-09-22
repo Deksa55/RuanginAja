@@ -30,7 +30,26 @@ export default function MemberProfile() {
     setLoading(true);
     try {
       const res = await apiFetcher("/api/auth/profile");
-      if (res?.status) setProfile(res.data);
+      const stored = getStoredUser();
+      let merged = res?.status ? res.data : stored;
+      const uname = merged?.username || stored?.username;
+      if (typeof window !== "undefined" && uname) {
+        const cachedRegStr = localStorage.getItem(`registered_profile_${uname}`);
+        if (cachedRegStr) {
+          try {
+            const reg = JSON.parse(cachedRegStr);
+            merged = {
+              ...merged,
+              ...reg,
+              member: {
+                ...(merged?.member || {}),
+                ...reg,
+              },
+            };
+          } catch {}
+        }
+      }
+      setProfile(merged);
     } catch (err) {
       console.error("Gagal memuat profil:", err);
       // Fallback from localStorage

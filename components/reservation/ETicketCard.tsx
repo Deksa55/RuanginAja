@@ -8,6 +8,7 @@ import {
   resolveReservationSpaceName,
   formatTanggal,
 } from "../../lib/api/client";
+import { X, Printer } from "lucide-react";
 
 interface ETicketCardProps {
   ticket: any | null;
@@ -27,9 +28,9 @@ export default function ETicketCard({ ticket, onClose }: ETicketCardProps) {
       <div className="bg-slate-900 border border-slate-800 rounded-3xl max-w-sm w-full p-6 text-white space-y-5 shadow-2xl relative">
         <button
           onClick={onClose}
-          className="absolute top-4 right-4 text-slate-400 hover:text-white text-lg font-bold"
+          className="absolute top-4 right-4 text-slate-400 hover:text-white transition-colors"
         >
-          ✕
+          <X className="w-5 h-5" />
         </button>
 
         <div className="text-center space-y-1">
@@ -74,9 +75,10 @@ export default function ETicketCard({ ticket, onClose }: ETicketCardProps) {
         <div className="flex gap-2 pt-2">
           <Link
             href={`/member/reservations/${ticket.id}/ticket`}
-            className="flex-1 bg-[#087EA4] hover:bg-[#075985] text-white py-2.5 rounded-xl text-xs font-bold text-center shadow-md"
+            className="flex-1 bg-[#087EA4] hover:bg-[#075985] text-white py-2.5 rounded-xl text-xs font-bold text-center shadow-md flex items-center justify-center gap-1.5"
           >
-            Halaman Cetak Penuh 🖨️
+            <Printer className="w-3.5 h-3.5" />
+            <span>Halaman Cetak Penuh</span>
           </Link>
           <button
             onClick={onClose}

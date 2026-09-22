@@ -2,6 +2,17 @@
 
 import { useState, useEffect } from "react";
 import { getAppKey, setAppKey, apiFetcher, API_BASE_URL } from "../../lib/api/client";
+import {
+  X,
+  KeyRound,
+  UserPlus,
+  CheckCircle2,
+  AlertCircle,
+  Users,
+  Building2,
+  Tag,
+  Calendar,
+} from "lucide-react";
 
 interface MakerConfigModalProps {
   isOpen: boolean;
@@ -139,9 +150,9 @@ export default function MakerConfigModal({
           </div>
           <button
             onClick={onClose}
-            className="text-slate-400 hover:text-white text-xl font-bold"
+            className="text-slate-400 hover:text-white transition-colors"
           >
-            ✕
+            <X className="w-5 h-5" />
           </button>
         </div>
 
@@ -149,23 +160,25 @@ export default function MakerConfigModal({
         <div className="flex border-b border-slate-100 bg-slate-50 p-1">
           <button
             onClick={() => setTab("switch")}
-            className={`flex-1 py-2.5 rounded-xl text-xs font-bold transition-all ${
+            className={`flex-1 py-2.5 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-1.5 ${
               tab === "switch"
                 ? "bg-white text-slate-900 shadow-xs"
                 : "text-slate-500 hover:text-slate-800"
             }`}
           >
-            🔑 Gunakan / Ganti App Key
+            <KeyRound className="w-3.5 h-3.5" />
+            <span>Gunakan / Ganti App Key</span>
           </button>
           <button
             onClick={() => setTab("register")}
-            className={`flex-1 py-2.5 rounded-xl text-xs font-bold transition-all ${
+            className={`flex-1 py-2.5 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-1.5 ${
               tab === "register"
                 ? "bg-white text-slate-900 shadow-xs"
                 : "text-slate-500 hover:text-slate-800"
             }`}
           >
-            ✨ Registrasi Akun Siswa Baru
+            <UserPlus className="w-3.5 h-3.5" />
+            <span>Registrasi Akun Siswa Baru</span>
           </button>
         </div>
 
@@ -218,7 +231,11 @@ export default function MakerConfigModal({
                       : "bg-amber-50 text-amber-700 border border-amber-200"
                   }`}
                 >
-                  <span>{isSuccess ? "✅" : "⚠️"}</span>
+                  {isSuccess ? (
+                    <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
+                  ) : (
+                    <AlertCircle className="w-4 h-4 text-amber-600 shrink-0" />
+                  )}
                   <p className="font-semibold">{statusMsg}</p>
                 </div>
               )}
@@ -230,17 +247,21 @@ export default function MakerConfigModal({
                     Statistik Data Terisolasi untuk Key Ini:
                   </span>
                   <div className="grid grid-cols-2 gap-2 text-[11px] font-medium text-slate-700">
-                    <div className="bg-white p-2 rounded-xl border border-slate-100">
-                      👥 Total Member: <b>{stats.total_members ?? 0}</b>
+                    <div className="bg-white p-2 rounded-xl border border-slate-100 flex items-center gap-1.5">
+                      <Users className="w-3.5 h-3.5 text-slate-400 shrink-0" />
+                      <span>Total Member: <b>{stats.total_members ?? 0}</b></span>
                     </div>
-                    <div className="bg-white p-2 rounded-xl border border-slate-100">
-                      🏢 Total Space: <b>{stats.total_spaces ?? 0}</b>
+                    <div className="bg-white p-2 rounded-xl border border-slate-100 flex items-center gap-1.5">
+                      <Building2 className="w-3.5 h-3.5 text-slate-400 shrink-0" />
+                      <span>Total Space: <b>{stats.total_spaces ?? 0}</b></span>
                     </div>
-                    <div className="bg-white p-2 rounded-xl border border-slate-100">
-                      🏷️ Total Diskon: <b>{stats.total_diskon ?? 0}</b>
+                    <div className="bg-white p-2 rounded-xl border border-slate-100 flex items-center gap-1.5">
+                      <Tag className="w-3.5 h-3.5 text-slate-400 shrink-0" />
+                      <span>Total Diskon: <b>{stats.total_diskon ?? 0}</b></span>
                     </div>
-                    <div className="bg-white p-2 rounded-xl border border-slate-100">
-                      📅 Total Reservasi: <b>{stats.total_reservasi ?? 0}</b>
+                    <div className="bg-white p-2 rounded-xl border border-slate-100 flex items-center gap-1.5">
+                      <Calendar className="w-3.5 h-3.5 text-slate-400 shrink-0" />
+                      <span>Total Reservasi: <b>{stats.total_reservasi ?? 0}</b></span>
                     </div>
                   </div>
                 </div>

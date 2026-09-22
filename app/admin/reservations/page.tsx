@@ -12,6 +12,24 @@ import {
 } from "../../../lib/api/client";
 import { Html5Qrcode } from "html5-qrcode";
 import QRCodeDisplay from "../../../components/reservation/QRCodeDisplay";
+import {
+  RotateCw,
+  Clock,
+  CheckCircle2,
+  Monitor,
+  CheckSquare,
+  QrCode,
+  ClipboardList,
+  Check,
+  X,
+  Camera,
+  Image as ImageIcon,
+  Keyboard,
+  UploadCloud,
+  Info,
+  AlertCircle,
+  LogOut,
+} from "lucide-react";
 
 // Comprehensive QR Payload Parser (supports COWORKING|..., VERIFY-RESERVASI-..., CWK-..., BOOK-..., JSON, raw IDs)
 export function parseReservationQR(rawText: string): { id?: number; code?: string } | null {
@@ -392,9 +410,10 @@ export default function AdminReservationsPage() {
         <div className="flex items-center gap-2">
           <button
             onClick={() => loadReservations()}
-            className="bg-slate-100 hover:bg-slate-200 border border-slate-200 text-slate-700 px-4 py-2.5 rounded-xl text-xs font-bold transition-all shadow-xs"
+            className="bg-slate-100 hover:bg-slate-200 border border-slate-200 text-slate-700 px-4 py-2.5 rounded-xl text-xs font-bold transition-all shadow-xs flex items-center gap-1.5"
           >
-            🔄 Segarkan Data
+            <RotateCw className="w-3.5 h-3.5" />
+            <span>Segarkan Data</span>
           </button>
         </div>
       </div>
@@ -403,8 +422,8 @@ export default function AdminReservationsPage() {
       {pendingCount > 0 && (
         <div className="bg-gradient-to-r from-amber-500 to-amber-600 text-white rounded-2xl p-4 sm:p-5 shadow-lg shadow-amber-500/20 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-white/20 flex items-center justify-center text-xl font-black">
-              ⚡
+            <div className="w-10 h-10 rounded-xl bg-white/20 flex items-center justify-center">
+              <Clock className="w-5 h-5 text-white" />
             </div>
             <div>
               <h3 className="font-black text-sm sm:text-base">
@@ -429,7 +448,7 @@ export default function AdminReservationsPage() {
         <div className="bg-white p-4 sm:p-5 rounded-2xl border border-slate-200/80 shadow-xs space-y-1">
           <div className="flex items-center justify-between">
             <span className="text-[10px] font-bold uppercase tracking-wider text-amber-600">Menunggu</span>
-            <span className="text-base">⏳</span>
+            <Clock className="w-4 h-4 text-amber-500" />
           </div>
           <div className="text-2xl font-black text-slate-900">{pendingCount}</div>
           <p className="text-[11px] text-slate-400">Butuh persetujuan</p>
@@ -438,7 +457,7 @@ export default function AdminReservationsPage() {
         <div className="bg-white p-4 sm:p-5 rounded-2xl border border-slate-200/80 shadow-xs space-y-1">
           <div className="flex items-center justify-between">
             <span className="text-[10px] font-bold uppercase tracking-wider text-emerald-600">Disetujui</span>
-            <span className="text-base">✅</span>
+            <CheckCircle2 className="w-4 h-4 text-emerald-500" />
           </div>
           <div className="text-2xl font-black text-slate-900">{approvedCount}</div>
           <p className="text-[11px] text-slate-400">Siap untuk check-in</p>
@@ -447,7 +466,7 @@ export default function AdminReservationsPage() {
         <div className="bg-white p-4 sm:p-5 rounded-2xl border border-slate-200/80 shadow-xs space-y-1">
           <div className="flex items-center justify-between">
             <span className="text-[10px] font-bold uppercase tracking-wider text-sky-600">Aktif</span>
-            <span className="text-base">💻</span>
+            <Monitor className="w-4 h-4 text-sky-500" />
           </div>
           <div className="text-2xl font-black text-slate-900">{activeCount}</div>
           <p className="text-[11px] text-slate-400">Sedang menggunakan space</p>
@@ -456,7 +475,7 @@ export default function AdminReservationsPage() {
         <div className="bg-white p-4 sm:p-5 rounded-2xl border border-slate-200/80 shadow-xs space-y-1">
           <div className="flex items-center justify-between">
             <span className="text-[10px] font-bold uppercase tracking-wider text-slate-500">Selesai</span>
-            <span className="text-base">🏁</span>
+            <CheckSquare className="w-4 h-4 text-slate-400" />
           </div>
           <div className="text-2xl font-black text-slate-900">{completedCount}</div>
           <p className="text-[11px] text-slate-400">Telah check-out</p>
@@ -484,7 +503,7 @@ export default function AdminReservationsPage() {
             }}
             className="bg-[#087EA4] hover:bg-[#075985] text-white px-5 py-2.5 rounded-xl text-xs font-bold transition-all shadow-md shadow-sky-500/20 flex items-center gap-2 shrink-0 cursor-pointer"
           >
-            <span>📷</span>
+            <QrCode className="w-4 h-4" />
             <span>Scan QR & Check-In Tamu</span>
           </button>
         </div>
@@ -569,8 +588,8 @@ export default function AdminReservationsPage() {
           </div>
         ) : filteredReservations.length === 0 ? (
           <div className="text-center py-12 px-4 space-y-3 max-w-md mx-auto">
-            <div className="w-14 h-14 rounded-2xl bg-sky-50 text-[#087EA4] flex items-center justify-center mx-auto text-2xl">
-              📋
+            <div className="w-14 h-14 rounded-2xl bg-sky-50 text-[#087EA4] flex items-center justify-center mx-auto">
+              <ClipboardList className="w-7 h-7 text-[#087EA4]" />
             </div>
             <div className="space-y-1">
               <h4 className="text-sm font-bold text-slate-800">
@@ -669,9 +688,10 @@ export default function AdminReservationsPage() {
                             <button
                               onClick={() => handleUpdateStatus(r.id, "disetujui")}
                               disabled={actionLoading}
-                              className="bg-emerald-600 hover:bg-emerald-700 text-white px-3 py-1.5 rounded-xl text-[10px] font-bold transition-all shadow-xs"
+                              className="bg-emerald-600 hover:bg-emerald-700 text-white px-3 py-1.5 rounded-xl text-[10px] font-bold transition-all shadow-xs inline-flex items-center gap-1"
                             >
-                              ✓ Setujui
+                              <Check className="w-3 h-3" />
+                              <span>Setujui</span>
                             </button>
                             <button
                               onClick={() => handleCheckIn(r.id)}
@@ -679,14 +699,15 @@ export default function AdminReservationsPage() {
                               className="bg-[#087EA4] hover:bg-[#075985] text-white px-3 py-1.5 rounded-xl text-[10px] font-bold transition-all shadow-xs"
                               title="Setujui dan langsung aktifkan check-in tamu"
                             >
-                              ⚡ Check-In
+                              Check-In
                             </button>
                             <button
                               onClick={() => handleUpdateStatus(r.id, "dibatalkan")}
                               disabled={actionLoading}
-                              className="bg-rose-600 hover:bg-rose-700 text-white px-3 py-1.5 rounded-xl text-[10px] font-bold transition-all shadow-xs"
+                              className="bg-rose-600 hover:bg-rose-700 text-white px-3 py-1.5 rounded-xl text-[10px] font-bold transition-all shadow-xs inline-flex items-center gap-1"
                             >
-                              ✕ Tolak
+                              <X className="w-3 h-3" />
+                              <span>Tolak</span>
                             </button>
                           </>
                         )}
@@ -698,7 +719,7 @@ export default function AdminReservationsPage() {
                             disabled={actionLoading}
                             className="bg-sky-600 hover:bg-sky-700 text-white px-3.5 py-1.5 rounded-xl text-[10px] font-bold transition-all shadow-xs"
                           >
-                            ⚡ Check-In
+                            Check-In
                           </button>
                         )}
 
@@ -707,9 +728,10 @@ export default function AdminReservationsPage() {
                           <button
                             onClick={() => handleCheckOut(r.id)}
                             disabled={actionLoading}
-                            className="bg-[#087EA4] hover:bg-[#0284C7] text-white px-3.5 py-1.5 rounded-xl text-[10px] font-bold transition-all shadow-xs"
+                            className="bg-[#087EA4] hover:bg-[#0284C7] text-white px-3.5 py-1.5 rounded-xl text-[10px] font-bold transition-all shadow-xs inline-flex items-center gap-1"
                           >
-                            ➔ Check-Out
+                            <LogOut className="w-3 h-3" />
+                            <span>Check-Out</span>
                           </button>
                         )}
 
@@ -736,15 +758,15 @@ export default function AdminReservationsPage() {
             {/* Modal Header */}
             <div className="flex justify-between items-center border-b border-slate-100 pb-3">
               <div className="flex items-center gap-2.5">
-                <div className="w-9 h-9 rounded-xl bg-sky-50 text-[#087EA4] flex items-center justify-center text-lg font-bold">
-                  📷
+                <div className="w-9 h-9 rounded-xl bg-sky-50 text-[#087EA4] flex items-center justify-center">
+                  <QrCode className="w-5 h-5 text-[#087EA4]" />
                 </div>
                 <div>
                   <h3 className="font-black text-base text-slate-900">
                     Scan QR E-Ticket & Check-In
                   </h3>
-                  <p className="text-[11px] text-slate-400">
-                    Validasi kehadiran member & aktifkan ruangan secara real-time
+                  <p className="text-xs text-slate-400">
+                    Verifikasi kehadiran member menggunakan QR Code
                   </p>
                 </div>
               </div>
@@ -755,9 +777,9 @@ export default function AdminReservationsPage() {
                   setScanError("");
                   setScanSuccess("");
                 }}
-                className="text-slate-400 hover:text-slate-700 w-8 h-8 rounded-full hover:bg-slate-100 flex items-center justify-center text-lg font-bold transition-all"
+                className="text-slate-400 hover:text-slate-700 w-8 h-8 rounded-full hover:bg-slate-100 flex items-center justify-center transition-all"
               >
-                ✕
+                <X className="w-5 h-5" />
               </button>
             </div>
 
@@ -848,9 +870,9 @@ export default function AdminReservationsPage() {
                           setScannedRsv((prev: any) => prev ? { ...prev, status: "aktif" } : null);
                         }}
                         disabled={actionLoading}
-                        className="bg-[#087EA4] hover:bg-[#075985] text-white px-4 py-2.5 rounded-xl text-xs font-bold transition-all shadow-md shadow-sky-500/20 flex items-center gap-1.5"
+                        className="bg-[#087EA4] hover:bg-[#075985] text-white px-4 py-2.5 rounded-xl text-xs font-bold transition-all shadow-md shadow-sky-500/20"
                       >
-                        ⚡ Setujui & Langsung Check-In
+                        Setujui & Langsung Check-In
                       </button>
                       <button
                         onClick={async () => {
@@ -860,7 +882,7 @@ export default function AdminReservationsPage() {
                         disabled={actionLoading}
                         className="bg-emerald-600 hover:bg-emerald-700 text-white px-3.5 py-2.5 rounded-xl text-xs font-bold transition-all shadow-xs"
                       >
-                        ✓ Setujui Saja
+                        Setujui Saja
                       </button>
                     </>
                   )}
@@ -872,9 +894,9 @@ export default function AdminReservationsPage() {
                         setScannedRsv((prev: any) => prev ? { ...prev, status: "aktif" } : null);
                       }}
                       disabled={actionLoading}
-                      className="bg-[#087EA4] hover:bg-[#075985] text-white px-5 py-2.5 rounded-xl text-xs font-bold transition-all shadow-md shadow-sky-500/25 flex items-center gap-2"
+                      className="bg-[#087EA4] hover:bg-[#075985] text-white px-5 py-2.5 rounded-xl text-xs font-bold transition-all shadow-md shadow-sky-500/25"
                     >
-                      ⚡ Check-In Tamu Sekarang
+                      Check-In Tamu Sekarang
                     </button>
                   )}
 
@@ -887,13 +909,14 @@ export default function AdminReservationsPage() {
                       disabled={actionLoading}
                       className="bg-slate-800 hover:bg-slate-900 text-white px-5 py-2.5 rounded-xl text-xs font-bold transition-all shadow-xs flex items-center gap-1.5"
                     >
-                      🚪 Check-Out Tamu
+                      <LogOut className="w-4 h-4" />
+                      <span>Check-Out Tamu</span>
                     </button>
                   )}
 
                   {scannedRsv.status === "selesai" && (
                     <div className="w-full text-center py-2 text-xs font-bold text-slate-500 bg-slate-100 rounded-xl">
-                      ✓ Tamu ini telah selesai menggunakan ruangan (Check-out)
+                      Tamu ini telah selesai menggunakan ruangan (Check-out)
                     </div>
                   )}
 
@@ -920,13 +943,14 @@ export default function AdminReservationsPage() {
                       setScanMode("camera");
                       setScanError("");
                     }}
-                    className={`flex-1 py-2 rounded-xl text-xs font-bold transition-all ${
+                    className={`flex-1 py-2 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-1.5 ${
                       scanMode === "camera"
                         ? "bg-white text-slate-900 shadow-xs"
                         : "text-slate-500 hover:text-slate-800"
                     }`}
                   >
-                    📷 Kamera
+                    <Camera className="w-3.5 h-3.5" />
+                    <span>Kamera</span>
                   </button>
                   <button
                     type="button"
@@ -934,13 +958,14 @@ export default function AdminReservationsPage() {
                       setScanMode("upload");
                       setScanError("");
                     }}
-                    className={`flex-1 py-2 rounded-xl text-xs font-bold transition-all ${
+                    className={`flex-1 py-2 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-1.5 ${
                       scanMode === "upload"
                         ? "bg-white text-slate-900 shadow-xs"
                         : "text-slate-500 hover:text-slate-800"
                     }`}
                   >
-                    🖼️ Unggah Foto QR
+                    <ImageIcon className="w-3.5 h-3.5" />
+                    <span>Unggah Foto QR</span>
                   </button>
                   <button
                     type="button"
@@ -948,13 +973,14 @@ export default function AdminReservationsPage() {
                       setScanMode("manual");
                       setScanError("");
                     }}
-                    className={`flex-1 py-2 rounded-xl text-xs font-bold transition-all ${
+                    className={`flex-1 py-2 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-1.5 ${
                       scanMode === "manual"
                         ? "bg-white text-slate-900 shadow-xs"
                         : "text-slate-500 hover:text-slate-800"
                     }`}
                   >
-                    ⌨️ Input Kode
+                    <Keyboard className="w-3.5 h-3.5" />
+                    <span>Input Kode</span>
                   </button>
                 </div>
 
@@ -977,8 +1003,8 @@ export default function AdminReservationsPage() {
                 {scanMode === "upload" && (
                   <div className="space-y-3">
                     <label className="border-2 border-dashed border-sky-200 bg-sky-50/40 hover:bg-sky-50 rounded-2xl p-8 flex flex-col items-center justify-center cursor-pointer transition-all group text-center">
-                      <div className="w-14 h-14 rounded-2xl bg-white shadow-xs border border-sky-100 flex items-center justify-center text-3xl mb-3 group-hover:scale-110 transition-transform">
-                        📁
+                      <div className="w-14 h-14 rounded-2xl bg-white shadow-xs border border-sky-100 flex items-center justify-center mb-3 group-hover:scale-110 transition-transform">
+                        <UploadCloud className="w-7 h-7 text-[#087EA4]" />
                       </div>
                       <span className="text-xs font-bold text-slate-800">
                         Klik untuk Pilih File Gambar QR Code
@@ -1023,8 +1049,9 @@ export default function AdminReservationsPage() {
                         </button>
                       </div>
                     </div>
-                    <p className="text-[11px] text-slate-400">
-                      💡 Ketik nomor reservasi atau kode booking yang tertera di bawah QR tiket.
+                    <p className="text-[11px] text-slate-400 flex items-center gap-1.5">
+                      <Info className="w-3.5 h-3.5 text-slate-400 shrink-0" />
+                      <span>Ketik nomor reservasi atau kode booking yang tertera di bawah QR tiket.</span>
                     </p>
                   </form>
                 )}
@@ -1040,7 +1067,8 @@ export default function AdminReservationsPage() {
                 {scanError && (
                   <div className="p-3 bg-rose-50 border border-rose-200 text-rose-700 rounded-xl text-xs font-semibold space-y-1">
                     <p className="flex items-center gap-1.5 font-bold">
-                      <span>⚠️</span> {scanError}
+                      <AlertCircle className="w-4 h-4 text-rose-600 shrink-0" />
+                      <span>{scanError}</span>
                     </p>
                     <p className="text-[11px] text-rose-500">
                       Tips: Coba gunakan tab &quot;Unggah Foto QR&quot; atau masukkan kode booking di tab &quot;Input Kode&quot;.
@@ -1050,7 +1078,8 @@ export default function AdminReservationsPage() {
 
                 {scanSuccess && (
                   <div className="p-3 bg-emerald-50 border border-emerald-200 text-emerald-700 rounded-xl text-xs font-bold flex items-center gap-2">
-                    <span>✓</span> {scanSuccess}
+                    <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
+                    <span>{scanSuccess}</span>
                   </div>
                 )}
               </div>
@@ -1093,9 +1122,9 @@ export default function AdminReservationsPage() {
               </div>
               <button
                 onClick={() => setSelectedRsv(null)}
-                className="text-slate-400 hover:text-slate-700 text-xl font-bold"
+                className="text-slate-400 hover:text-slate-700 transition-colors"
               >
-                ✕
+                <X className="w-5 h-5" />
               </button>
             </div>
 
@@ -1168,7 +1197,7 @@ export default function AdminReservationsPage() {
                     onClick={() => handleCheckIn(selectedRsv.id)}
                     className="bg-[#087EA4] hover:bg-[#075985] text-white px-4 py-2 rounded-xl text-xs font-bold transition-all shadow-xs"
                   >
-                    ⚡ Setujui & Langsung Check-In
+                    Setujui & Langsung Check-In
                   </button>
                   <button
                     onClick={() => handleUpdateStatus(selectedRsv.id, "disetujui")}
@@ -1189,15 +1218,16 @@ export default function AdminReservationsPage() {
                   onClick={() => handleCheckIn(selectedRsv.id)}
                   className="bg-[#087EA4] hover:bg-[#075985] text-white px-5 py-2 rounded-xl text-xs font-bold"
                 >
-                  ⚡ Check-In Sekarang
+                  Check-In Sekarang
                 </button>
               )}
               {selectedRsv.status === "aktif" && (
                 <button
                   onClick={() => handleCheckOut(selectedRsv.id)}
-                  className="bg-slate-800 hover:bg-slate-900 text-white px-5 py-2 rounded-xl text-xs font-bold"
+                  className="bg-slate-800 hover:bg-slate-900 text-white px-5 py-2 rounded-xl text-xs font-bold flex items-center gap-1.5"
                 >
-                  🚪 Check-Out Tamu
+                  <LogOut className="w-4 h-4" />
+                  <span>Check-Out Tamu</span>
                 </button>
               )}
               <button
