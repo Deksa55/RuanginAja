@@ -10,23 +10,82 @@ const RAW_URL =
 
 export const API_BASE_URL = RAW_URL.replace(/\/+$/, "").replace(/\/api$/, "");
 
+let cachedMakerId: number | null = null;
+
 export function getAppKey(): string {
-  if (typeof window !== "undefined") {
-    const saved = localStorage.getItem("app_key") || localStorage.getItem("x_maker_key");
-    if (saved && saved.trim()) return saved.trim();
-  }
-  return (
-    process.env.NEXT_PUBLIC_MAKER_KEY ||
+  // Always prioritize the APP_KEY configured in environment variables
+  const envKey = (
     process.env.NEXT_PUBLIC_APP_KEY ||
-    "mk_default_ukk_2026"
-  );
+    process.env.APP_KEY ||
+    process.env.NEXT_PUBLIC_MAKER_KEY ||
+    ""
+  ).trim();
+
+  if (envKey) {
+    return envKey;
+  }
+
+  // Fallback to localStorage if configured and not the mock default
+  if (typeof window !== "undefined") {
+    const saved =
+      localStorage.getItem("app_key") || localStorage.getItem("x_maker_key");
+    if (saved && saved.trim() && saved.trim() !== "mk_default_ukk_2026") {
+      return saved.trim();
+    }
+  }
+
+  return "mk_bd2014546dba46b7858e3e2130d10a69";
 }
 
 export function setAppKey(key: string): void {
   if (typeof window !== "undefined") {
     localStorage.setItem("app_key", key.trim());
     localStorage.setItem("x_maker_key", key.trim());
+    cachedMakerId = null;
   }
+}
+
+/**
+ * Mendapatkan Maker ID resmi untuk App Key aktif (untuk isolasi data member & diskon)
+ */
+export async function getActiveMakerId(): Promise<number> {
+  if (cachedMakerId !== null) return cachedMakerId;
+
+  // 1. Cek data user tersimpan di sesi login
+  const user = getStoredUser();
+  if (user?.maker_id && typeof user.maker_id === "number") {
+    cachedMakerId = user.maker_id;
+    return cachedMakerId;
+  }
+  if (
+    user?.space_owner?.maker_id &&
+    typeof user.space_owner.maker_id === "number"
+  ) {
+    cachedMakerId = user.space_owner.maker_id;
+    return cachedMakerId;
+  }
+
+  // 2. Query ke /api/maker/stats menggunakan App Key aktif
+  try {
+    const key = getAppKey();
+    const res = await fetch(`${API_BASE_URL}/api/maker/stats`, {
+      headers: {
+        "x-maker-key": key,
+        "x-app-key": key,
+      },
+    });
+    const json = await res.json();
+    if (json?.data?.maker_id && typeof json.data.maker_id === "number") {
+      cachedMakerId = json.data.maker_id;
+      return cachedMakerId;
+    }
+  } catch (err) {
+    console.warn("Gagal mengambil maker_id via stats:", err);
+  }
+
+  // 3. Fallback default Maker ID untuk akun RuanginAja (12)
+  cachedMakerId = 12;
+  return cachedMakerId;
 }
 
 export function getStoredUser(): any | null {

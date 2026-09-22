@@ -78,6 +78,23 @@ export default function MakerConfigModal({
     }
   };
 
+  const handleResetToEnv = () => {
+    const envKey = (
+      process.env.NEXT_PUBLIC_APP_KEY ||
+      process.env.APP_KEY ||
+      process.env.NEXT_PUBLIC_MAKER_KEY ||
+      "mk_bd2014546dba46b7858e3e2130d10a69"
+    ).trim();
+    if (typeof window !== "undefined") {
+      localStorage.removeItem("app_key");
+      localStorage.removeItem("x_maker_key");
+    }
+    setAppKey(envKey);
+    setCurrentKeyState(envKey);
+    checkKey(envKey);
+    alert(`App Key berhasil dikembalikan ke konfigurasi .env: ${envKey}`);
+  };
+
   const handleRegisterMaker = async (e: React.FormEvent) => {
     e.preventDefault();
     setRegLoading(true);
@@ -113,38 +130,38 @@ export default function MakerConfigModal({
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm animate-fadeIn">
       <div className="bg-white rounded-3xl shadow-2xl max-w-lg w-full overflow-hidden border border-slate-200">
         {/* Header Modal */}
-        <div className="bg-linear-to-r from-slate-900 to-slate-800 p-6 text-white flex justify-between items-center">
+        <div className="p-6 bg-slate-900 text-white flex justify-between items-center">
           <div>
             <span className="text-[10px] font-bold uppercase tracking-widest text-sky-400">
-              UKK Multi-Tenancy System
+              Multi-Tenancy Isolation
             </span>
             <h2 className="text-xl font-black">App Maker Configuration</h2>
           </div>
           <button
             onClick={onClose}
-            className="text-slate-400 hover:text-white p-2 text-xl font-bold transition-colors"
+            className="text-slate-400 hover:text-white text-xl font-bold"
           >
             ✕
           </button>
         </div>
 
-        {/* Tab Navigation */}
-        <div className="flex border-b border-slate-200 bg-slate-50 text-xs font-bold">
+        {/* Tab Switcher */}
+        <div className="flex border-b border-slate-100 bg-slate-50 p-1">
           <button
             onClick={() => setTab("switch")}
-            className={`flex-1 py-3 text-center transition-all ${
+            className={`flex-1 py-2.5 rounded-xl text-xs font-bold transition-all ${
               tab === "switch"
-                ? "bg-white text-[#087EA4] border-b-2 border-[#087EA4]"
+                ? "bg-white text-slate-900 shadow-xs"
                 : "text-slate-500 hover:text-slate-800"
             }`}
           >
-            🔑 Kelola App Key
+            🔑 Gunakan / Ganti App Key
           </button>
           <button
             onClick={() => setTab("register")}
-            className={`flex-1 py-3 text-center transition-all ${
+            className={`flex-1 py-2.5 rounded-xl text-xs font-bold transition-all ${
               tab === "register"
-                ? "bg-white text-[#087EA4] border-b-2 border-[#087EA4]"
+                ? "bg-white text-slate-900 shadow-xs"
                 : "text-slate-500 hover:text-slate-800"
             }`}
           >
@@ -157,9 +174,18 @@ export default function MakerConfigModal({
           {tab === "switch" ? (
             <form onSubmit={handleSaveKey} className="space-y-4">
               <div>
-                <label className="block text-[10px] font-bold uppercase text-slate-400 mb-1">
-                  Active App Key (x-maker-key)
-                </label>
+                <div className="flex justify-between items-center mb-1">
+                  <label className="block text-[10px] font-bold uppercase text-slate-400">
+                    Active App Key (x-maker-key)
+                  </label>
+                  <button
+                    type="button"
+                    onClick={handleResetToEnv}
+                    className="text-[10px] font-bold text-[#087EA4] hover:underline"
+                  >
+                    ↺ Reset ke Kunci .env
+                  </button>
+                </div>
                 <div className="flex gap-2">
                   <input
                     type="text"
@@ -179,7 +205,7 @@ export default function MakerConfigModal({
                   </button>
                 </div>
                 <p className="text-[11px] text-slate-400 mt-1">
-                  Default panitia: <code className="bg-slate-100 px-1 py-0.5 rounded text-[#087EA4]">mk_default_ukk_2026</code>
+                  Kunci resmi RuanginAja (.env): <code className="bg-slate-100 px-1 py-0.5 rounded text-[#087EA4]">mk_bd2014546dba46b7858e3e2130d10a69</code>
                 </p>
               </div>
 

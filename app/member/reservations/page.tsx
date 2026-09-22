@@ -139,11 +139,11 @@ export default function MemberReservationsPage() {
           <div className="flex flex-wrap gap-2 text-xs font-bold">
             {[
               { label: "Semua", value: "all" },
-              { label: "⏳ Belum Dikonfirmasi", value: "belum_dikonfirmasi" },
-              { label: "✅ Disetujui", value: "disetujui" },
-              { label: "⚡ Aktif Digunakan", value: "aktif" },
-              { label: "🏁 Selesai", value: "selesai" },
-              { label: "❌ Dibatalkan", value: "dibatalkan" },
+              { label: " Belum Dikonfirmasi", value: "belum_dikonfirmasi" },
+              { label: " Disetujui", value: "disetujui" },
+              { label: " Aktif Digunakan", value: "aktif" },
+              { label: " Selesai", value: "selesai" },
+              { label: " Dibatalkan", value: "dibatalkan" },
             ].map((tab) => (
               <button
                 key={tab.value}
@@ -168,7 +168,7 @@ export default function MemberReservationsPage() {
           </div>
         ) : filteredReservations.length === 0 ? (
           <div className="bg-white p-12 rounded-3xl text-center border border-slate-200 space-y-3">
-            <div className="text-4xl">📋</div>
+            <div className="text-4xl"></div>
             <h3 className="font-bold text-slate-800 text-sm">Tidak Ada Pemesanan</h3>
             <p className="text-xs text-slate-400">
               {statusFilter === "all"
@@ -210,10 +210,10 @@ export default function MemberReservationsPage() {
 
                     <div className="flex flex-wrap items-center gap-4 text-xs text-slate-500">
                       <span>
-                        📅 <b>{formatTanggal(item.tanggal_reservasi || item.tanggal)}</b>
+                         <b>{formatTanggal(item.tanggal_reservasi || item.tanggal)}</b>
                       </span>
                       <span>
-                        ⏰ <b>{item.jam_mulai || "-"}</b> ({item.durasi_jam || item.durasi || 1} Jam)
+                         <b>{item.jam_mulai || "-"}</b> ({item.durasi_jam || item.durasi || 1} Jam)
                       </span>
                     </div>
                   </div>
@@ -244,7 +244,7 @@ export default function MemberReservationsPage() {
                           href={`/member/reservations/${item.id}/ticket`}
                           className="px-5 py-2.5 bg-[#087EA4] hover:bg-[#075985] text-white font-bold rounded-2xl text-xs transition-all shadow-md shadow-sky-500/20"
                         >
-                          🎟️ Buka E-Ticket
+                           Buka E-Ticket
                         </Link>
                       )}
                     </div>

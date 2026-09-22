@@ -183,7 +183,7 @@ export default function MemberHistoryPage() {
           </div>
         ) : historyData.items.length === 0 ? (
           <div className="bg-white p-12 rounded-3xl text-center border border-slate-200 space-y-3">
-            <div className="text-4xl">📅</div>
+            <div className="text-4xl"></div>
             <h3 className="font-bold text-slate-800 text-sm">Tidak Ada Transaksi</h3>
             <p className="text-xs text-slate-400">
               Belum ada riwayat reservasi pada {monthNames[selectedMonth - 1]} {selectedYear}.
@@ -239,7 +239,7 @@ export default function MemberHistoryPage() {
                     href={`/member/reservations/${item.id}/ticket`}
                     className="px-5 py-2.5 bg-[#087EA4] hover:bg-[#075985] text-white font-bold rounded-2xl text-xs transition-all shadow-md shadow-sky-500/20 hover:scale-[1.02]"
                   >
-                    🎟️ E-Ticket
+                     E-Ticket
                   </Link>
                 </div>
               </div>

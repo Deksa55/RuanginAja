@@ -258,7 +258,7 @@ export default function HomePage() {
                   href="/auth/register?role=admin"
                   className="text-xs font-bold text-slate-600 hover:text-[#087EA4] px-2 py-1.5 transition-colors inline-flex items-center gap-1 bg-white/70 backdrop-blur-xs rounded-lg"
                 >
-                  <span>🏢 Daftarkan Coworking (Admin)</span>
+                  <span> Daftarkan Coworking (Admin)</span>
                 </Link>
               </div>
 
@@ -391,11 +391,11 @@ export default function HomePage() {
 
                 {/* Quick Perks Footer in Phone */}
                 <div className="mt-2.5 flex items-center justify-between px-1 text-[9px] text-slate-600 font-medium">
-                  <span>📶 300 Mbps</span>
+                  <span> 300 Mbps</span>
                   <span className="text-sky-300">•</span>
-                  <span>☕ Espresso Bar</span>
+                  <span> Cofee Break </span>
                   <span className="text-sky-300">•</span>
-                  <span>🔒 Smart Lock</span>
+                  <span> Smart Lock</span>
                 </div>
               </div>
             </div>
@@ -486,9 +486,9 @@ export default function HomePage() {
                   className="w-full py-1 text-xs sm:text-sm font-bold text-slate-800 bg-transparent outline-none cursor-pointer focus:text-[#087EA4]"
                 >
                   <option value="">Semua Tipe Ruang</option>
-                  <option value="desk">💻 Personal Desk</option>
-                  <option value="meeting_room">👥 Meeting Room</option>
-                  <option value="private_office">🏢 Private Office</option>
+                  <option value="desk"> Personal Desk</option>
+                  <option value="meeting_room"> Meeting Room</option>
+                  <option value="private_office"> Private Office</option>
                 </select>
               </div>
 
@@ -653,7 +653,7 @@ export default function HomePage() {
           <div className="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-xs hover:shadow-md hover:border-sky-300 transition-all space-y-3.5 flex flex-col justify-between">
             <div className="space-y-2.5">
               <div className="w-10 h-10 rounded-xl bg-sky-50 text-[#087EA4] flex items-center justify-center text-lg font-bold">
-                🏢
+                
               </div>
               <h3 className="text-base font-bold text-slate-900">Private Office</h3>
               <p className="text-xs text-slate-500 leading-relaxed">
@@ -688,7 +688,7 @@ export default function HomePage() {
               href="/spaces"
               className="text-xs font-bold text-[#087EA4] hover:text-[#075985] flex items-center gap-1"
             >
-              Lihat Semua Ruangan ({spaces.length}+) →
+              Lihat Semua Ruangan ({spaces.length}) →
             </Link>
           </div>
         </div>
@@ -704,6 +704,20 @@ export default function HomePage() {
                 <div className="h-4 bg-slate-200 rounded w-full"></div>
               </div>
             ))}
+          </div>
+        ) : spaces.length === 0 ? (
+          <div className="bg-white p-10 rounded-3xl text-center border border-slate-200/80 space-y-3 max-w-md mx-auto shadow-xs">
+            <div className="text-3xl"></div>
+            <h3 className="text-sm font-bold text-slate-800">Katalog Ruangan Belum Ditambahkan</h3>
+            <p className="text-xs text-slate-500 leading-relaxed">
+              Admin RuanginAja belum menambahkan ruangan kerja ke sistem. Ruangan yang dibuat di panel admin akan otomatis tampil di sini.
+            </p>
+            <Link
+              href="/auth/admin/login"
+              className="inline-block bg-[#087EA4] hover:bg-[#075985] text-white text-xs font-bold px-4 py-2 rounded-xl shadow-xs"
+            >
+              Kelola di Panel Admin
+            </Link>
           </div>
         ) : filteredSpaces.length === 0 ? (
           <div className="bg-white p-8 rounded-2xl text-center border border-slate-200 space-y-2.5">

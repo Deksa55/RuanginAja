@@ -5,6 +5,7 @@ import {
   apiFetcher,
   resolveMemberAvatar,
   uploadMedia,
+  getActiveMakerId,
 } from "../../../lib/api/client";
 
 interface MemberItem {
@@ -15,6 +16,7 @@ interface MemberItem {
   alamat?: string;
   telp?: string;
   foto?: string | null;
+  maker_id?: number | null;
 }
 
 const emptyForm = {
@@ -32,6 +34,7 @@ export default function AdminMembersPage() {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [search, setSearch] = useState("");
+  const [activeMakerId, setActiveMakerId] = useState<number | null>(null);
 
   // Modal State
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -50,6 +53,10 @@ export default function AdminMembersPage() {
   async function loadMembers() {
     setLoading(true);
     try {
+      // 1. Dapatkan Maker ID resmi yang terikat ke APP_KEY di .env
+      const targetMakerId = await getActiveMakerId();
+      setActiveMakerId(targetMakerId);
+
       let url = "/api/admin/members";
       if (search.trim()) {
         url += `?search=${encodeURIComponent(search.trim())}`;
@@ -59,7 +66,10 @@ export default function AdminMembersPage() {
       if (Array.isArray(res?.data)) list = res.data;
       else if (Array.isArray(res?.data?.items)) list = res.data.items;
       else if (Array.isArray(res)) list = res;
-      setMembers(list);
+
+      // 2. ISOLASI DATA: Hanya tampilkan member yang memiliki maker_id milik APP_KEY aktif
+      const filtered = list.filter((m: any) => m.maker_id === targetMakerId);
+      setMembers(filtered);
     } catch (err) {
       console.error("Gagal memuat member:", err);
     } finally {
@@ -110,9 +120,19 @@ export default function AdminMembersPage() {
     setSaving(true);
     try {
       if (editingMember) {
-        // Exclude password if empty during update
-        const payload: any = { ...form };
-        if (!payload.password) delete payload.password;
+        // Skema UpdateMemberAdminDto: [nama_member, instansi, alamat, telp, password, foto]
+        const payload: any = {
+          nama_member: form.nama_member,
+          instansi: form.instansi,
+          alamat: form.alamat,
+          telp: form.telp,
+        };
+        if (form.password && form.password.trim()) {
+          payload.password = form.password.trim();
+        }
+        if (form.foto) {
+          payload.foto = form.foto;
+        }
 
         await apiFetcher(`/api/admin/members/${editingMember.id}`, {
           method: "PUT",
@@ -153,25 +173,25 @@ export default function AdminMembersPage() {
       <div className="bg-white p-6 sm:p-8 rounded-3xl border border-slate-200/80 shadow-xs flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <div>
           <span className="text-[10px] font-bold uppercase tracking-widest text-[#087EA4]">
-            Database Pelanggan
+            Database Pelanggan RuanginAja
           </span>
           <h1 className="text-2xl sm:text-3xl font-black text-slate-900">
             Kelola Member & Pelanggan (CRUD)
           </h1>
           <p className="text-xs text-slate-500 pt-1">
-            Daftar tamu, instansi, alamat domisili, dan kontak telepon aktif.
+            Daftar member aktif yang terdaftar dan terisolasi untuk APP_KEY sistem ini.
           </p>
         </div>
 
         <button
           onClick={handleOpenAdd}
-          className="bg-[#087EA4] hover:bg-[#0284C7] text-white px-5 py-3 rounded-2xl text-xs font-bold transition-all shadow-md shadow-sky-500/20 flex items-center gap-1.5"
+          className="bg-[#087EA4] hover:bg-[#0284C7] text-white px-5 py-3 rounded-2xl text-xs font-bold transition-all shadow-md shadow-sky-500/20 flex items-center gap-1.5 cursor-pointer"
         >
           <span>+</span> Tambah Member Baru
         </button>
       </div>
 
-      {/* Search Bar (Wireframe B-4) */}
+      {/* Search Bar & App Key Status Pill */}
       <div className="bg-white p-6 rounded-3xl border border-slate-200/80 shadow-xs flex flex-col sm:flex-row justify-between items-center gap-4">
         <div className="w-full sm:w-80 relative">
           <input
@@ -184,7 +204,7 @@ export default function AdminMembersPage() {
           <span className="absolute left-3.5 top-3 text-slate-400 text-xs">🔍</span>
         </div>
 
-        <span className="text-xs font-bold text-slate-500">
+        <span className="text-xs font-bold text-slate-600">
           Total Pelanggan: <b>{members.length}</b> Orang
         </span>
       </div>
@@ -198,9 +218,9 @@ export default function AdminMembersPage() {
       ) : members.length === 0 ? (
         <div className="bg-white p-12 rounded-3xl text-center border border-slate-200 space-y-3">
           <div className="text-4xl">👥</div>
-          <h3 className="font-bold text-slate-800 text-sm">Belum Ada Pelanggan</h3>
-          <p className="text-xs text-slate-400">
-            Mulai tambahkan pelanggan baru atau ubah kata kunci pencarian.
+          <h3 className="font-bold text-slate-800 text-sm">Belum Ada Member di RuanginAja</h3>
+          <p className="text-xs text-slate-400 max-w-md mx-auto">
+            Hanya member yang terdaftar dengan APP_KEY ini yang ditampilkan di panel Anda. Klik tombol <b>&ldquo;+ Tambah Member Baru&rdquo;</b> di atas untuk menambahkan pelanggan.
           </p>
         </div>
       ) : (

@@ -22,9 +22,11 @@ export default function MemberDashboard() {
 
   async function loadReservations() {
     try {
-      const res = await apiFetcher("/reservasi/my");
-      if (res.status && Array.isArray(res.data)) {
+      const res = await apiFetcher("/api/reservasi/my");
+      if (res?.status && Array.isArray(res.data)) {
         setReservations(res.data);
+      } else if (Array.isArray(res)) {
+        setReservations(res);
       }
     } catch (err) {
       console.error(err);
@@ -36,8 +38,8 @@ export default function MemberDashboard() {
   const handleCancel = async (id: number) => {
     if (!confirm("Yakin batalkan reservasi ini?")) return;
     try {
-      const res = await apiFetcher(`/reservasi/${id}/cancel`, { method: "PATCH" });
-      if (res.status) {
+      const res = await apiFetcher(`/api/reservasi/${id}/cancel`, { method: "PATCH" });
+      if (res?.status || res) {
         alert("Pemesanan berhasil dibatalkan!");
         loadReservations();
       }
@@ -48,8 +50,14 @@ export default function MemberDashboard() {
 
   const showETicket = async (id: number) => {
     try {
-      const res = await apiFetcher(`/reservasi/${id}/e-ticket`);
-      if (res.status) setSelectedTicket(res.data);
+      const res = await apiFetcher(`/api/reservasi/${id}/e-ticket`);
+      if (res?.status && res?.data) {
+        setSelectedTicket(res.data);
+      } else if (res?.data) {
+        setSelectedTicket(res.data);
+      } else if (res) {
+        setSelectedTicket(res);
+      }
     } catch (err) {
       alert("Gagal memuat E-Ticket");
     }

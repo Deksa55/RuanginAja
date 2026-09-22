@@ -1,7 +1,10 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { apiFetcher } from "../../../lib/api/client";
+import {
+  apiFetcher,
+  getActiveMakerId,
+} from "../../../lib/api/client";
 
 interface DiskonItem {
   id: number;
@@ -10,6 +13,7 @@ interface DiskonItem {
   tanggal_awal: string;
   tanggal_akhir: string;
   is_active?: boolean;
+  maker_id?: number | null;
 }
 
 const emptyForm = {
@@ -23,6 +27,7 @@ export default function AdminPromotionsPage() {
   const [promos, setPromos] = useState<DiskonItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [activeMakerId, setActiveMakerId] = useState<number | null>(null);
 
   // Modal State
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -36,12 +41,18 @@ export default function AdminPromotionsPage() {
   async function loadPromotions() {
     setLoading(true);
     try {
+      const targetMakerId = await getActiveMakerId();
+      setActiveMakerId(targetMakerId);
+
       const res: any = await apiFetcher("/api/admin/diskon");
       let list: DiskonItem[] = [];
       if (Array.isArray(res?.data)) list = res.data;
       else if (Array.isArray(res?.data?.items)) list = res.data.items;
       else if (Array.isArray(res)) list = res;
-      setPromos(list);
+
+      // ISOLASI DATA: Hanya tampilkan promo milik APP_KEY aktif
+      const filtered = list.filter((p: any) => p.maker_id === targetMakerId);
+      setPromos(filtered);
     } catch (err) {
       console.error("Gagal memuat promo:", err);
     } finally {
@@ -137,19 +148,19 @@ export default function AdminPromotionsPage() {
       <div className="bg-white p-6 sm:p-8 rounded-3xl border border-slate-200/80 shadow-xs flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <div>
           <span className="text-[10px] font-bold uppercase tracking-widest text-[#087EA4]">
-            Program Diskon & Promo
+            Program Diskon & Promo RuanginAja
           </span>
           <h1 className="text-2xl sm:text-3xl font-black text-slate-900">
             Kelola Kode Promo & Event Diskon
           </h1>
           <p className="text-xs text-slate-500 pt-1">
-            Buat voucher potongan harga untuk meningkatkan pemesanan coworking space.
+            Buat voucher potongan harga untuk meningkatkan pemesanan coworking space Anda.
           </p>
         </div>
 
         <button
           onClick={handleOpenAdd}
-          className="bg-[#087EA4] hover:bg-[#0284C7] text-white px-5 py-3 rounded-2xl text-xs font-bold transition-all shadow-md shadow-sky-500/20 flex items-center gap-1.5"
+          className="bg-[#087EA4] hover:bg-[#0284C7] text-white px-5 py-3 rounded-2xl text-xs font-bold transition-all shadow-md shadow-sky-500/20 flex items-center gap-1.5 cursor-pointer"
         >
           <span>+</span> Buat Promo Baru
         </button>

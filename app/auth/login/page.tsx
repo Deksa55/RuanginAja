@@ -105,7 +105,7 @@ export default function LoginPage() {
 
           <div className="space-y-1">
             <h2 className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight">
-              Selamat Datang Kembali 👋
+              Selamat Datang Kembali!
             </h2>
             <p className="text-xs text-slate-500">
               Silakan masukkan username dan password akun Anda

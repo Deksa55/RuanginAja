@@ -196,16 +196,18 @@ export default function SpaceDetailPage({
 
     setSubmitting(true);
     try {
-      const payload = {
+      const payload: any = {
         id_space: Number(spaceId),
         tanggal_reservasi: tanggal,
-        tanggal: tanggal,
         jam_mulai: jamMulai,
         durasi_jam: durasiJam,
-        durasi: durasiJam,
-        ...(appliedPromo?.id && { id_diskon: appliedPromo.id }),
-        ...(appliedPromo?.nama_diskon && { kode_promo: appliedPromo.nama_diskon }),
       };
+      if (appliedPromo?.id) {
+        payload.id_diskon = Number(appliedPromo.id);
+      }
+      if (appliedPromo?.nama_diskon) {
+        payload.kode_promo = appliedPromo.nama_diskon;
+      }
 
       const res: any = await apiFetcher("/api/reservasi", {
         method: "POST",
@@ -308,22 +310,22 @@ export default function SpaceDetailPage({
                   </h3>
                   <div className="grid grid-cols-2 sm:grid-cols-3 gap-2.5 text-xs font-semibold text-slate-700">
                     <div className="p-2.5 rounded-xl bg-slate-50 border border-slate-100 flex items-center gap-2">
-                      <span>📶</span> Wi-Fi 100Mbps
+                      <span></span> Wi-Fi 100Mbps
                     </div>
                     <div className="p-2.5 rounded-xl bg-slate-50 border border-slate-100 flex items-center gap-2">
-                      <span>⚡</span> Stopkontak Meja
+                      <span></span> Stopkontak Meja
                     </div>
                     <div className="p-2.5 rounded-xl bg-slate-50 border border-slate-100 flex items-center gap-2">
-                      <span>❄️</span> Ruangan Ber-AC
+                      <span></span> Ruangan Ber-AC
                     </div>
                     <div className="p-2.5 rounded-xl bg-slate-50 border border-slate-100 flex items-center gap-2">
-                      <span>☕</span> Free Coffee & Water
+                      <span></span> Free Coffee & Water
                     </div>
                     <div className="p-2.5 rounded-xl bg-slate-50 border border-slate-100 flex items-center gap-2">
-                      <span>🪑</span> Kursi Ergonomis
+                      <span></span> Kursi Ergonomis
                     </div>
                     <div className="p-2.5 rounded-xl bg-slate-50 border border-slate-100 flex items-center gap-2">
-                      <span>📱</span> QR Fast Check-In
+                      <span></span> QR Fast Check-In
                     </div>
                   </div>
                 </div>
@@ -498,13 +500,13 @@ export default function SpaceDetailPage({
 
                 {!currentUser && (
                   <p className="text-[11px] text-slate-400 text-center font-medium">
-                    💡 Anda belum masuk. Anda akan diarahkan untuk login terlebih dahulu.
+                     Anda belum masuk. Anda akan diarahkan untuk login terlebih dahulu.
                   </p>
                 )}
 
                 {currentUser?.role === "admin_space" && (
                   <p className="text-[11px] text-amber-600 text-center font-medium">
-                    ⚠️ Anda sedang masuk sebagai Admin Space. Reservasi hanya untuk akun Member.
+                     Anda sedang masuk sebagai Admin Space. Reservasi hanya untuk akun Member.
                   </p>
                 )}
               </form>

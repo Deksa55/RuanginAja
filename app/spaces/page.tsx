@@ -107,7 +107,7 @@ function SpacesContent() {
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 border-b border-slate-100/90 pb-6">
           <div className="space-y-1.5 max-w-xl">
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-sky-100 text-[#087EA4] text-[11px] font-bold uppercase tracking-wider">
-              <span>🏢 KATALOG RUANG KERJA RESMI</span>
+              <span> KATALOG RUANG KERJA RESMI</span>
             </div>
             <h1 className="text-2xl sm:text-3xl lg:text-4xl font-black text-slate-900 tracking-tight leading-tight">
               Eksplorasi Ruang Kerja & Meja
@@ -189,11 +189,11 @@ function SpacesContent() {
               onChange={(e) => setSortBy(e.target.value as any)}
               className="w-full bg-white border border-slate-200/90 px-4 py-3 rounded-2xl text-xs sm:text-sm font-bold text-slate-700 outline-none focus:border-[#087EA4] focus:ring-2 focus:ring-sky-100 cursor-pointer shadow-xs"
             >
-              <option value="recommended">✨ Rekomendasi Populer</option>
-              <option value="newest">🆕 Ruangan Terbaru</option>
-              <option value="cheapest">💰 Tarif Termurah</option>
-              <option value="priciest">💎 Tarif Tertinggi</option>
-              <option value="capacity">👥 Kapasitas Terbesar</option>
+              <option value="recommended"> Rekomendasi Populer</option>
+              <option value="newest"> Ruangan Terbaru</option>
+              <option value="cheapest"> Tarif Termurah</option>
+              <option value="priciest"> Tarif Tertinggi</option>
+              <option value="capacity"> Kapasitas Terbesar</option>
             </select>
           </div>
         </div>
@@ -211,10 +211,26 @@ function SpacesContent() {
             </div>
           ))}
         </div>
+      ) : spaces.length === 0 ? (
+        <div className="bg-white p-12 rounded-3xl text-center border border-slate-200/90 space-y-4 max-w-md mx-auto shadow-xs">
+          <div className="w-16 h-16 rounded-full bg-sky-50 text-[#087EA4] flex items-center justify-center mx-auto text-2xl">
+            
+          </div>
+          <h3 className="font-black text-slate-900 text-base">Belum Ada Ruangan Terdaftar</h3>
+          <p className="text-xs text-slate-500 leading-relaxed">
+            Katalog ruangan RuanginAja saat ini masih kosong. Admin dapat menambahkan ruangan kerja baru melalui menu <b>Kelola Ruangan</b> di Panel Admin.
+          </p>
+          <Link
+            href="/auth/admin/login"
+            className="inline-block bg-[#087EA4] hover:bg-[#075985] text-white px-5 py-2.5 rounded-xl text-xs font-bold transition-all shadow-sm"
+          >
+            Login Admin Space
+          </Link>
+        </div>
       ) : filteredSpaces.length === 0 ? (
         <div className="bg-white p-12 rounded-3xl text-center border border-slate-200/90 space-y-4 max-w-md mx-auto shadow-xs">
           <div className="w-16 h-16 rounded-full bg-sky-50 text-[#087EA4] flex items-center justify-center mx-auto text-2xl">
-            🔍
+            
           </div>
           <h3 className="font-black text-slate-900 text-base">Tidak Ada Ruangan Ditemukan</h3>
           <p className="text-xs text-slate-500 leading-relaxed">
@@ -226,7 +242,7 @@ function SpacesContent() {
               setSearch("");
               setSelectedType("");
             }}
-            className="bg-[#087EA4] hover:bg-[#075985] text-white px-5 py-2.5 rounded-xl text-xs font-bold transition-all shadow-sm"
+            className="bg-[#087EA4] hover:bg-[#075985] text-white px-5 py-2.5 rounded-xl text-xs font-bold transition-all shadow-sm cursor-pointer"
           >
             Tampilkan Semua Ruang
           </button>

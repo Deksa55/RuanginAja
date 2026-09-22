@@ -130,14 +130,14 @@ export default function MemberProfile() {
                   href="/member/history"
                   className="bg-slate-100 hover:bg-slate-200 text-slate-700 px-5 py-2.5 rounded-2xl text-xs font-bold transition-all"
                 >
-                  📜 Lihat Histori & Rekapitulasi
+                   Lihat Histori & Rekapitulasi
                 </Link>
 
                 <button
                   onClick={handleLogout}
                   className="bg-rose-50 hover:bg-rose-100 text-rose-600 px-5 py-2.5 rounded-2xl text-xs font-bold transition-all border border-rose-200"
                 >
-                  🚪 Keluar dari Akun
+                   Keluar dari Akun
                 </button>
               </div>
             </div>
