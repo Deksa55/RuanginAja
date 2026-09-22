@@ -1,26 +1,222 @@
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400;1,600&display=swap');
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  --font-sans: 'Plus Jakarta Sans', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+  --color-primary: #087EA4;
+  --color-primary-dark: #0369A1;
+  --color-primary-light: #E0F2FE;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-sans);
+  background-color: #F8FAFC;
+  color: #0F172A;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Custom modern scrollbar */
+::-webkit-scrollbar {
+  width: 7px;
+  height: 7px;
+}
+::-webkit-scrollbar-track {
+  background: #F1F5F9;
+}
+::-webkit-scrollbar-thumb {
+  background: #CBD5E1;
+  border-radius: 9999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #94A3B8;
+}
+
+/* Glassmorphism helpers */
+.glass-panel {
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+.glass-dark {
+  background: rgba(11, 19, 34, 0.75);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.glass-dark-card {
+  background: linear-gradient(135deg, rgba(17, 24, 39, 0.8) 0%, rgba(15, 23, 42, 0.6) 100%);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.glass-ocean-card {
+  background: rgba(255, 255, 255, 0.92);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(8, 126, 164, 0.14);
+  box-shadow: 0 10px 30px -10px rgba(8, 126, 164, 0.08), 0 2px 8px -2px rgba(0, 0, 0, 0.04);
+}
+
+.glass-ocean-card:hover {
+  border-color: rgba(8, 126, 164, 0.4);
+  box-shadow: 0 20px 40px -12px rgba(8, 126, 164, 0.18), 0 6px 16px -2px rgba(0, 0, 0, 0.06);
+}
+
+/* 3D Perspective utilities for phone mockup showcase */
+.perspective-1200 {
+  perspective: 1200px;
+}
+.transform-3d {
+  transform-style: preserve-3d;
+}
+
+/* Custom animations for floating elements */
+@keyframes float-gentle {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-6px);
+  }
+}
+
+@keyframes float-reverse {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(6px);
+  }
+}
+
+@keyframes pulse-glow {
+  0%, 100% {
+    opacity: 0.35;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.65;
+    transform: scale(1.08);
+  }
+}
+
+.animate-float-phone-1 {
+  animation: float-gentle 7s ease-in-out infinite;
+}
+
+.animate-float-phone-2 {
+  animation: float-reverse 9s ease-in-out infinite;
+}
+
+.animate-pulse-glow {
+  animation: pulse-glow 6s ease-in-out infinite;
+}
+
+/* QR Code Laser Scan Line */
+@keyframes scan-line {
+  0%, 100% {
+    top: 6%;
+    opacity: 0.3;
+  }
+  50% {
+    top: 88%;
+    opacity: 0.95;
+  }
+}
+
+.animate-scan-line {
+  animation: scan-line 2.6s ease-in-out infinite;
+}
+
+/* Fluid letter wave animation for Bersama Kami */
+@keyframes letter-wave {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  35% {
+    transform: translateY(-8px);
+  }
+  70% {
+    transform: translateY(2px);
+  }
+}
+
+.animate-letter-wave {
+  display: inline-block;
+  animation: letter-wave 2.4s ease-in-out infinite;
+  will-change: transform;
+}
+
+/* Gentle floating animation for headline word */
+@keyframes float-bersama {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-5px);
+  }
+}
+
+.animate-float-bersama {
+  display: inline-block;
+  animation: float-bersama 2.8s ease-in-out infinite;
+}
+
+/* Curved decorative underline wave pulse animation */
+@keyframes underline-wave {
+  0%, 100% {
+    stroke-dashoffset: 0;
+    transform: scaleY(1);
+    opacity: 0.85;
+  }
+  50% {
+    stroke-dashoffset: 24;
+    transform: scaleY(1.3) translateY(1px);
+    opacity: 1;
+    filter: drop-shadow(0 0 6px rgba(14, 165, 233, 0.75));
+  }
+}
+
+.animate-underline-wave {
+  stroke-dasharray: 140;
+  transform-origin: center;
+  animation: underline-wave 2.5s ease-in-out infinite;
+}
+
+/* Smooth reveal on scroll (works smoothly when scrolling down and back up) */
+.reveal-on-scroll {
+  opacity: 0;
+  transform: translateY(28px);
+  transition: opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1), transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: opacity, transform;
+}
+
+.reveal-on-scroll.is-revealed {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Print Styles for E-Ticket */
+@media print {
+  body {
+    background: #ffffff !important;
+    color: #000000 !important;
+  }
+  .no-print, header, footer, aside, nav, button {
+    display: none !important;
+  }
+  .print-only {
+    display: block !important;
+  }
+  .e-ticket-card {
+    border: 2px dashed #000 !important;
+    box-shadow: none !important;
+    max-width: 100% !important;
+    width: 100% !important;
+    page-break-inside: avoid;
+  }
 }
